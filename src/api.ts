@@ -18,7 +18,7 @@ import {
 import { useRetry } from "./hooks/useRetry";
 import type { MultipartUploadDTO, UploadURL } from "./types/upload";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "";
 
 declare global {
   interface Window {
@@ -31,24 +31,15 @@ if (typeof window !== "undefined" && !window.__playtubeFetchPatched) {
 
   window.fetch = async (resource, config) => {
     const headers = new Headers(config?.headers);
-    const body = config?.body;
-    if (!headers.has("Content-Type") && !(body instanceof FormData)) {
-      headers.set("Content-Type", "application/json");
-    }
 
-    const input =
-      typeof resource === "string"
-        ? resource
-        : resource instanceof URL
-          ? resource.toString()
-          : resource.url;
-    const isAbsolute = /^https?:\/\//.test(input);
-    const requestUrl = isAbsolute ? input : `${API_BASE_URL}${input}`;
+    headers.append("Content-Type", "application/json");
+
+    const requestUrl = `${API_BASE_URL}${resource}`;
 
     const response = await originalFetch(requestUrl, {
       ...config,
       headers,
-      credentials: config?.credentials ?? "include",
+      credentials: "include",
     });
 
     if (!response.ok) {
