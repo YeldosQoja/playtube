@@ -1,0 +1,19 @@
+.main {
+  background: var(--surface);
+}
+
+@media screen and (min-width: 50rem) {
+  .outlet {
+    margin-left: 5rem;
+  }
+}
+
+@media screen and (min-width: 80rem) {
+  .outlet[data-sidebar-state="expanded"] {
+    margin-left: 15rem;
+  }
+
+  .outlet[data-sidebar-state="collapsed"] {
+    margin-left: 5rem;
+  }
+}

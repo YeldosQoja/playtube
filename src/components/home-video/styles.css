@@ -1,0 +1,38 @@
+.video-details {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--on-surface-variant);
+}
+
+.video-thumbnail-container {
+    aspect-ratio: 16 / 9;
+}
+
+.video-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-author-avatar {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0.75rem 0.75rem 0 0;
+}
+
+.video-author-name, .video-author-name:visited {
+    color: inherit;
+}
+
+.video-title {
+    color: var(--on-surface);
+    margin-top: 0.75rem;
+    margin-bottom: 0;
+}
+
+.video-meta span + span {
+    margin-left: 0.25rem;
+}

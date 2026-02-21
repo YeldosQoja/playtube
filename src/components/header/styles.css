@@ -1,0 +1,144 @@
+.header {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: var(--header-height);
+  background: var(--surface-container);
+  padding-inline: 0.75rem;
+  display: flex;
+  column-gap: calc(var(--spacer) * 3);
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header__left {
+  display: flex;
+  align-items: center;
+  column-gap: var(--spacer);
+  flex: none;
+}
+
+.header__center {
+  display: none;
+}
+
+@media (min-width: 40rem) {
+  .header__center {
+    display: block;
+    flex-basis: var(--search-input-width);
+  }
+}
+
+.header__right {
+  display: flex;
+  align-items: center;
+  column-gap: var(--spacer);
+  flex: none;
+}
+
+.header__menu-btn {
+  padding: 0.5rem;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.header__menu-btn svg {
+  display: block;
+  color: var(--on-surface);
+}
+
+.header__menu-btn:hover {
+  background: var(--surface-container-highest);
+}
+
+.header__menu-btn:active {
+  background: var(--surface-container-highest);
+}
+
+.header__search-bar {
+  display: flex;
+}
+
+.header__search-input {
+  border-radius: 1rem 0 0 1rem;
+  padding-inline: 1rem;
+}
+
+.header__search-btn {
+  color: var(--on-surface);
+  background: var(--surface-container);
+  padding-inline: 1.5rem;
+  border-radius: 0 1rem 1rem 0;
+  border: 0.75px solid var(--outline);
+  margin-left: -0.75px;
+}
+
+.header__upload-btn {
+  display: inline-flex;
+  color: var(--on-surface);
+  background: var(--surface-container-high);
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+  align-items: center;
+  column-gap: 0.5rem;
+  border-radius: 1.5rem;
+}
+
+.header__upload-btn:visited {
+  color: var(--on-surface);
+}
+
+.header__icon-btn {
+  display: block;
+  padding: 6px;
+  background: transparent;
+
+  svg {
+    display: block;
+    color: var(--on-surface);
+  }
+}
+
+.header__overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  padding: var(--spacer);
+  column-gap: calc(var(--spacer) * 2);
+}
+
+.header__overlay[data-state="open"] {
+  z-index: 0;
+  opacity: 1;
+}
+
+.header__overlay[data-state="hidden"] {
+  z-index: -1;
+  opacity: 0;
+}
+
+.header__overlay .header__search-bar {
+  flex-basis: 100%;
+}
+
+.header__mobile-btn {
+  display: block;
+}
+
+@media (min-width: 40rem) {
+  .header__overlay {
+    z-index: -1 !important;
+    opacity: 0 !important;
+  }
+
+  .header__mobile-btn {
+    display: none;
+  }
+}

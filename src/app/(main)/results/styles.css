@@ -1,0 +1,9 @@
+.search {
+  padding: var(--spacer);
+  margin-top: var(--header-height);
+}
+
+.search .container {
+  max-width: 78rem;
+  margin: 0 auto;
+}

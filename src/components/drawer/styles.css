@@ -1,0 +1,38 @@
+.drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  height: 100vh;
+  background: var(--surface-container);
+  width: 15rem;
+  transition: transform 0.3s ease-in-out;
+}
+
+.drawer.open {
+  transform: translateX(0);
+}
+
+.drawer.closed {
+  transform: translateX(-100%);
+}
+
+.drawer-backdrop {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  transition: opacity 0.3s ease-in;
+}
+
+.drawer-backdrop.closed {
+  opacity: 0;
+  z-index: -100;
+}
+
+.drawer-backdrop.open {
+  opacity: 1;
+  z-index: 1;
+}

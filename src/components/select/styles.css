@@ -1,0 +1,58 @@
+.select-trigger {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    width: 100%;
+}
+
+.select-trigger:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
+}
+
+.select-trigger > span {
+    flex: 1;
+    text-align: left;
+}
+
+.select-trigger .icon {
+    color: var(--on-surface);
+    display: block;
+}
+
+.select-content {
+    background-color: white;
+    width: var(--radix-select-trigger-width);
+    border-radius: 0.375rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    padding: 0.25rem;
+}
+
+.select-item {
+    display: flex;
+    align-items: center;
+    font-size: inherit;
+    font-weight: inherit;
+    color: var(--on-surface);
+    border-radius: 0;
+    padding: 0.375rem 0.5rem;
+    user-select: none;
+    cursor: pointer;
+}
+
+.select-item:hover {
+    background-color: #f3f4f6;
+}
+
+.select-item:focus {
+    background-color: #f3f4f6;
+}
+
+.select-item > .item-indicator {
+    color: var(--on-surface);
+}
+
+.select-item > svg {
+    margin-inline: 0.5rem;
+}

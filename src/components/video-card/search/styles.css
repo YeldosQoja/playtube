@@ -1,0 +1,45 @@
+.video-card-search {
+  display: flex;
+  column-gap: var(--spacer);
+}
+
+.video-card-search > .video-thumbnail {
+  flex: 1;
+  max-width: 500px;
+  min-width: 240px;
+}
+
+.video-card-search > .details {
+  flex: 1;
+  font-size: 0.75rem;
+  color: var(--on-surface-variant);
+}
+
+.video-card-search .channel-name,
+.channel-name:visited {
+  color: inherit;
+}
+
+.video-card-search .title {
+  color: var(--on-surface);
+  margin-block: 0;
+  font-size: var(--h3);
+  line-height: 1.5;
+  margin-block: 0;
+}
+
+.video-card-search .meta {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.video-card-search .channel-info {
+  display: flex;
+  column-gap: var(--spacer);
+  align-items: center;
+  margin-block: calc(var(--spacer) * 1.25);
+}
+
+.video-card-search .channel-avatar {
+  border-radius: 50%;
+}

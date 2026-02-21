@@ -1,0 +1,34 @@
+.video-card {
+    aspect-ratio: 16 / 9;
+    font-size: 0.875rem;
+    color: var(--on-surface-variant);
+}
+
+.video-card__details {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.video-card__channel-avatar {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.video-card__channel-name, .video-card__channel-name:visited {
+    color: inherit;
+}
+
+.video-card__title {
+    color: var(--on-surface);
+    margin-block: 0;
+    font-size: var(--body);
+    line-height: 1.5;
+}
+
+.video-card__meta {
+    display: flex;
+    gap: 0.25rem;
+}

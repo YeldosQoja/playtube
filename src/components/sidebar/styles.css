@@ -1,0 +1,44 @@
+.sidebar {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: var(--header-height);
+  bottom: 0;
+  width: 5rem;
+  background: var(--surface-container);
+}
+
+@media screen and (min-width: 50rem) {
+  .sidebar {
+    display: block;
+  }
+}
+
+@media screen and (min-width: 80rem) {
+  .sidebar {
+    width: 15rem;
+  }
+
+  .sidebar.collapsed {
+    width: 5rem;
+  }
+
+  .collapsed .menu__item {
+    border-radius: 0.75rem;
+    padding: 0.5rem 0;
+
+    a {
+      padding: 0;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      row-gap: 0.125rem;
+      cursor: pointer;
+    }
+  }
+
+  .collapsed .menu__item-label {
+    font-size: 0.75rem;
+    font-weight: 400;
+  }
+}

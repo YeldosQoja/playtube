@@ -1,0 +1,27 @@
+.checkbox {
+    display: flex;
+    column-gap: .5rem;
+    align-items: center;
+}
+
+.checkbox__root {
+  display: flex;
+  width: 21px;
+  height: 21px;
+  appearance: none;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--on-surface);
+  border-radius: 0.25rem;
+  background-color: transparent;
+  outline: none;
+  padding: 0;
+}
+
+.checkbox__root[data-state="checked"] {
+  background-color: var(--on-surface);
+}
+
+.checkbox__root .icon {
+  color: var(--surface);
+}

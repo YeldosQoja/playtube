@@ -1,0 +1,7 @@
+.dashboard {
+    margin-inline: auto;
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+.dashboard .upload-btn {}

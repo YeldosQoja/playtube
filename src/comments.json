@@ -1,0 +1,158 @@
+[
+  {
+    "username": "alice",
+    "date": "2025-07-13",
+    "text": "Great video! Learned a lot.",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/1.jpg"
+  },
+  {
+    "username": "bob",
+    "date": "2025-07-12",
+    "text": "Thanks for sharing this content.",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/2.jpg"
+  },
+  {
+    "username": "charlie",
+    "date": "2025-07-11",
+    "text": "Can you make a tutorial on the next topic?",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/3.jpg"
+  },
+  {
+    "username": "diana",
+    "date": "2025-07-10",
+    "text": "Awesome explanation, very clear.",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/4.jpg"
+  },
+  {
+    "username": "eve",
+    "date": "2025-07-09",
+    "text": "I had some issues following along, but this helped.",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/5.jpg"
+  },
+  {
+    "username": "frank",
+    "date": "2025-07-08",
+    "text": "Looking forward to more content like this.",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/6.jpg"
+  },
+  {
+    "username": "grace",
+    "date": "2025-07-07",
+    "text": "This was exactly what I needed, thank you!",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/7.jpg"
+  },
+  {
+    "username": "hank",
+    "date": "2025-07-06",
+    "text": "I didn't find this helpful.",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/8.jpg"
+  },
+  {
+    "username": "iris",
+    "date": "2025-07-05",
+    "text": "Can you please provide the source for this information?",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/9.jpg"
+  },
+  {
+    "username": "jack",
+    "date": "2025-07-04",
+    "text": "Subscribed! Can't wait for the next video.",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/10.jpg"
+  },
+  {
+    "username": "karen",
+    "date": "2025-07-03",
+    "text": "Very informative, thank you!",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/11.jpg"
+  },
+  {
+    "username": "leo",
+    "date": "2025-07-02",
+    "text": "I disagree with some points made, but overall good video.",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/12.jpg"
+  },
+  {
+    "username": "mia",
+    "date": "2025-07-01",
+    "text": "Could you elaborate on the last point?",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/13.jpg"
+  },
+  {
+    "username": "nick",
+    "date": "2025-06-30",
+    "text": "Not bad, but I've seen better.",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/14.jpg"
+  },
+  {
+    "username": "olivia",
+    "date": "2025-06-29",
+    "text": "This is exactly what I was looking for, thanks!",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/15.jpg"
+  },
+  {
+    "username": "paul",
+    "date": "2025-06-28",
+    "text": "The presentation could be improved.",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/16.jpg"
+  },
+  {
+    "username": "quinn",
+    "date": "2025-06-27",
+    "text": "Great examples, very helpful.",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/17.jpg"
+  },
+  {
+    "username": "ryan",
+    "date": "2025-06-26",
+    "text": "I learned something new today, thank you!",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/18.jpg"
+  },
+  {
+    "username": "sara",
+    "date": "2025-06-25",
+    "text": "Can you do a video on advanced topics?",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/19.jpg"
+  },
+  {
+    "username": "tom",
+    "date": "2025-06-24",
+    "text": "I appreciate the effort, but this wasn't for me.",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/20.jpg"
+  },
+  {
+    "username": "uma",
+    "date": "2025-06-23",
+    "text": "Fantastic content, keep it up!",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/21.jpg"
+  },
+  {
+    "username": "viktor",
+    "date": "2025-06-22",
+    "text": "I have some suggestions for improvement.",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/22.jpg"
+  },
+  {
+    "username": "wendy",
+    "date": "2025-06-21",
+    "text": "Very helpful, thank you!",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/23.jpg"
+  },
+  {
+    "username": "xander",
+    "date": "2025-06-20",
+    "text": "I didn't find this video engaging.",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/24.jpg"
+  },
+  {
+    "username": "yvonne",
+    "date": "2025-06-19",
+    "text": "Could you make a video about the previous topic?",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/25.jpg"
+  },
+  {
+    "username": "zack",
+    "date": "2025-06-18",
+    "text": "This was a waste of time.",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/26.jpg"
+  }
+]
