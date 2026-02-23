@@ -1,5 +1,3 @@
-"use client";
-
 import "./styles.css";
 import { Share2, Star, ThumbsDown, ThumbsUp } from "lucide-react";
 import comments from "@/comments.json";

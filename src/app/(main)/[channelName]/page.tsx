@@ -1,5 +1,3 @@
-"use client";
-
 import "./styles.css";
 import { useCallback, useLayoutEffect, useRef } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
