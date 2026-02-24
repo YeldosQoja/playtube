@@ -50,6 +50,9 @@ importers:
       react-hook-form:
         specifier: ^7.62.0
         version: 7.71.2(react@19.2.3)
+      set-cookie-parser:
+        specifier: ^3.0.1
+        version: 3.0.1
     devDependencies:
       '@types/node':
         specifier: ^20
@@ -60,6 +63,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.3(@types/react@19.2.14)
+      '@types/set-cookie-parser':
+        specifier: ^2.4.10
+        version: 2.4.10
       babel-plugin-react-compiler:
         specifier: 1.0.0
         version: 1.0.0
@@ -902,6 +908,9 @@ packages:
 
   '@types/react@19.2.14':
     resolution: {integrity: sha512-ilcTH/UniCkMdtexkoCN0bI7pMcJDvmQFPvuPvmEaYA/NSfFTAgdUSLAoVjaRJm7+6PvcM+q1zYOwS4wTYMF9w==}
+
+  '@types/set-cookie-parser@2.4.10':
+    resolution: {integrity: sha512-GGmQVGpQWUe5qglJozEjZV/5dyxbOOZ0LHe/lqyWssB88Y4svNfst0uqBVscdDeIKl5Jy5+aPSvy7mI9tYRguw==}
 
   '@typescript-eslint/eslint-plugin@8.56.0':
     resolution: {integrity: sha512-lRyPDLzNCuae71A3t9NEINBiTn7swyOhvUj3MyUOxb8x6g6vPEFoOU+ZRmGMusNC3X3YMhqMIX7i8ShqhT74Pw==}
@@ -2050,6 +2059,9 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  set-cookie-parser@3.0.1:
+    resolution: {integrity: sha512-n7Z7dXZhJbwuAHhNzkTti6Aw9QDDjZtm3JTpTGATIdNzdQz5GuFs22w90BcvF4INfnrL5xrX3oGsuqO5Dx3A1Q==}
+
   set-function-length@1.2.2:
     resolution: {integrity: sha512-pgRc4hJ4/sNjWCSS9AmnS40x3bNMDTknHgL5UaMBTMyJnU90EgWh1Rz+MC9eFu4BuN/UwZjKQuY/1v3rM7HMfg==}
     engines: {node: '>= 0.4'}
@@ -3069,6 +3081,10 @@ snapshots:
   '@types/react@19.2.14':
     dependencies:
       csstype: 3.2.3
+
+  '@types/set-cookie-parser@2.4.10':
+    dependencies:
+      '@types/node': 20.19.33
 
   '@typescript-eslint/eslint-plugin@8.56.0(@typescript-eslint/parser@8.56.0(eslint@9.39.2)(typescript@5.9.3))(eslint@9.39.2)(typescript@5.9.3)':
     dependencies:
@@ -4383,6 +4399,8 @@ snapshots:
   semver@6.3.1: {}
 
   semver@7.7.4: {}
+
+  set-cookie-parser@3.0.1: {}
 
   set-function-length@1.2.2:
     dependencies:

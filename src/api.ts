@@ -1,5 +1,3 @@
-"use client";
-
 import {
   QueryClient,
   useMutation,
@@ -18,92 +16,7 @@ import {
 import { useRetry } from "./hooks/useRetry";
 import type { MultipartUploadDTO, UploadURL } from "./types/upload";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "";
-
-declare global {
-  interface Window {
-    __playtubeFetchPatched?: boolean;
-  }
-}
-
-if (typeof window !== "undefined" && !window.__playtubeFetchPatched) {
-  const originalFetch = window.fetch.bind(window);
-
-  window.fetch = async (resource, config) => {
-    const headers = new Headers(config?.headers);
-
-    headers.append("Content-Type", "application/json");
-
-    const requestUrl = `${API_BASE_URL}${resource}`;
-
-    const response = await originalFetch(requestUrl, {
-      ...config,
-      headers,
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      console.error("Fetch error:", response.status, response.statusText);
-    }
-
-    return response;
-  };
-
-  window.__playtubeFetchPatched = true;
-}
-
 export const queryClient = new QueryClient();
-
-type SigninRequestData = {
-  username: string;
-  password: string;
-};
-
-export const useSignin = () => {
-  const router = useRouter();
-
-  return useMutation({
-    mutationFn: async ({ username, password }: SigninRequestData) => {
-      const response = await fetch("auth/signin", {
-        method: "POST",
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
-      }
-
-      return await response.json();
-    },
-    onSuccess: () => {
-      router.push("/");
-    },
-  });
-};
-
-type SignupRequestData = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  username: string;
-  password: string;
-};
-
-export const useSignup = () =>
-  useMutation({
-    mutationFn: async (data: SignupRequestData) => {
-      const response = await fetch("auth/signup", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
-      }
-
-      return await response.json();
-    },
-  });
 
 export const useAuth = () =>
   useQuery({
