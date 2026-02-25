@@ -3,7 +3,7 @@ import videos from "@/videos.json";
 import { VideoCardGrid } from "@/components/video-card/grid";
 import Link from "next/link";
 
-const Home = () => {
+export default function Home() {
   return (
     <div className="home">
       <h1>Browse</h1>
@@ -13,15 +13,11 @@ const Home = () => {
             <Link
               key={video.id}
               href={`/watch/${video.id}`}>
-              <VideoCardGrid
-                video={video}
-              />
+              <VideoCardGrid video={video} />
             </Link>
           );
         })}
       </section>
     </div>
   );
-};
-
-export default Home;
+}

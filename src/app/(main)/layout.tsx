@@ -7,7 +7,6 @@ import { SidebarProvider, Sidebar, useSidebar } from "@/components/sidebar";
 import { History, Home, TrendingUp } from "lucide-react";
 import { Header } from "@/components/header";
 import { Drawer, DrawerProvider } from "@/components/drawer";
-import { ProtectedRoute } from "@/components/protected-route";
 
 const HOME_SIDEBAR_ITEMS = [
   {
@@ -32,18 +31,16 @@ export default function MainLayout({ children }: PropsWithChildren) {
   const hideLayout = pathname.startsWith("/watch/");
 
   return (
-    <ProtectedRoute>
-      <SidebarProvider>
-        <DrawerProvider>
-          <div className="main">
-            {!hideLayout && <Sidebar items={HOME_SIDEBAR_ITEMS} />}
-            <Header />
-            <Drawer items={HOME_SIDEBAR_ITEMS} />
-            <PageContainer>{children}</PageContainer>
-          </div>
-        </DrawerProvider>
-      </SidebarProvider>
-    </ProtectedRoute>
+    <SidebarProvider>
+      <DrawerProvider>
+        <div className="main">
+          {!hideLayout && <Sidebar items={HOME_SIDEBAR_ITEMS} />}
+          <Header />
+          <Drawer items={HOME_SIDEBAR_ITEMS} />
+          <PageContainer>{children}</PageContainer>
+        </div>
+      </DrawerProvider>
+    </SidebarProvider>
   );
 }
 

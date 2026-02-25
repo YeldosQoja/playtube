@@ -6,12 +6,12 @@ import { Button, Input, Label } from "@/components";
 import { signIn } from "@/actions/auth";
 
 export const SignInForm = () => {
-  const [data, action] = useActionState(signIn, {
+  const [, action] = useActionState(signIn, {
     msg: "",
     isSuccess: false,
     isSubmitted: false,
   });
-  
+
   return (
     <form
       className="auth-form"

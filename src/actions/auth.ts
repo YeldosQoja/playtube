@@ -2,6 +2,7 @@
 
 import { ActionState } from "@/types/action-state";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { parseString as parseSetCookie } from "set-cookie-parser";
 
 const API_BASE_URL = process.env["API_BASE_URL"];
@@ -42,16 +43,19 @@ export async function signIn(
     });
   }
 
-  return {
-    isSuccess: true,
-    isSubmitted: true,
-    msg: `Signed in to account ${formData.get("username")}`,
-  };
+  redirect("/");
 }
 
-export async function signUp(prevState: ActionState, formData: FormData) {
+export async function signUp(
+  prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
   const response = await fetch(API_BASE_URL + "auth/signup", {
     method: "POST",
+    headers: {
+      "content-type": "application/json",
+      accept: "application/json",
+    },
     body: JSON.stringify({
       username: formData.get("username"),
       email: formData.get("email"),

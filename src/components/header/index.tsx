@@ -1,4 +1,5 @@
 import "./styles.css";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   BellIcon,
@@ -13,7 +14,6 @@ import { Input } from "../input";
 import { useSidebar } from "../sidebar";
 import { useDrawer } from "../drawer";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { useCallback, useEffect, useRef, useState } from "react";
 
 export const Header = () => {
   const { toggleSidebar } = useSidebar();
