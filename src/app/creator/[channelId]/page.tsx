@@ -1,11 +1,11 @@
-import Upload from "./_components/upload";
 import "./page.css";
+import UploadDialog from "./_components/upload-dialog";
 
 const Dashboard = () => {
   return (
     <div className="dashboard">
       <h1>Dashboard</h1>
-      <Upload />
+      <UploadDialog />
     </div>
   );
 };

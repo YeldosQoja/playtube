@@ -1,5 +1,3 @@
-"use client";
-
 import "./layout.css";
 import type { PropsWithChildren } from "react";
 import {
@@ -9,7 +7,6 @@ import {
   Users,
 } from "lucide-react";
 import { Sidebar, SidebarProvider } from "@/components/sidebar";
-import { ProtectedRoute } from "@/components/protected-route";
 
 const CREATOR_SIDEBAR_ITEMS = [
   {
@@ -36,15 +33,11 @@ const CREATOR_SIDEBAR_ITEMS = [
 
 export default function CreatorLayout({ children }: PropsWithChildren) {
   return (
-    <ProtectedRoute>
-      <SidebarProvider>
-        <div className="creator">
-          <Sidebar items={CREATOR_SIDEBAR_ITEMS} />
-          <div className="outlet-container">
-            {children}
-          </div>
-        </div>
-      </SidebarProvider>
-    </ProtectedRoute>
+    <SidebarProvider>
+      <div className="creator">
+        <Sidebar items={CREATOR_SIDEBAR_ITEMS} />
+        <div className="outlet-container">{children}</div>
+      </div>
+    </SidebarProvider>
   );
 }

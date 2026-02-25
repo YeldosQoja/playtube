@@ -32,7 +32,7 @@ const categories = [
   { id: 15, label: "Nonprofits & Activism" },
 ];
 
-const Upload = () => {
+const UploadDialog = () => {
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const videoInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
@@ -420,4 +420,4 @@ const Upload = () => {
   );
 };
 
-export default Upload;
+export default UploadDialog;

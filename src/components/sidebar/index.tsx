@@ -1,3 +1,5 @@
+"use client";
+
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { Menu, MenuItem } from "../menu";
 import "./styles.css";
