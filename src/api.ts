@@ -1,10 +1,11 @@
+"use client";
+
 import {
   QueryClient,
   useMutation,
   useQuery,
   type UseMutationResult,
 } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { useCallback, useRef, useState } from "react";
 import {
   completeMultipartUpload,
@@ -16,21 +17,48 @@ import {
 import { useRetry } from "./hooks/useRetry";
 import type { MultipartUploadDTO, UploadURL } from "./types/upload";
 
+const API_BASE_URL = process.env["NEXT_PUBLIC_BASE_URL"] as string;
+
+const originalFetch = window.fetch;
+
+window.fetch = async (...args) => {
+  const [resource, config] = args;
+
+  try {
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+
+    const response = await originalFetch(API_BASE_URL + resource, {
+      headers,
+      credentials: "include",
+      ...config,
+    });
+
+    // Response interception logic
+    // Example: Global error handling
+    if (!response.ok) {
+      console.error("Fetch error:", response.status, response.statusText);
+      // Handle specific error codes or redirect
+    }
+
+    // Important: if you need to read the response body in the interceptor
+    // and still pass it down, you must clone the response.
+    // const clonedResponse = response.clone();
+    // const data = await clonedResponse.json();
+    // console.log('Response data:', data);
+
+    const clonedResponse = response.clone();
+    const data = await response.json();
+    console.log("Response data:", data);
+    return clonedResponse;
+  } catch (error) {
+    // Error interception logic
+    console.error("Network or fetch error:", error);
+    throw error; // Re-throw the error to propagate it
+  }
+};
+
 export const queryClient = new QueryClient();
-
-export const useAuth = () =>
-  useQuery({
-    queryKey: ["auth"],
-    queryFn: async () => {
-      const response = await fetch("auth/me");
-      if (!response.ok) {
-        throw new Error("Not authenticated!");
-      }
-
-      return await response.json();
-    },
-    retry: false,
-  });
 
 export const useMultipartUpload = (): [
   UseMutationResult<string, Error, File, unknown>,
@@ -43,7 +71,10 @@ export const useMultipartUpload = (): [
   const onProgress = useCallback((partNumber: number, loaded: number) => {
     if (!uploadedBytes.current) return;
     uploadedBytes.current[partNumber - 1] = loaded;
-    const totalUpload = uploadedBytes.current.reduce((acc, cur) => acc + cur, 0);
+    const totalUpload = uploadedBytes.current.reduce(
+      (acc, cur) => acc + cur,
+      0,
+    );
     setProgress(Math.floor((totalUpload / totalBytes.current) * 100));
   }, []);
 
@@ -57,9 +88,10 @@ export const useMultipartUpload = (): [
         throw new Error("Not authenticated!");
       }
 
-      const { urls, videoId, uploadId } = (await response.json()) as MultipartUploadDTO & {
-        urls: UploadURL[];
-      };
+      const { urls, videoId, uploadId } =
+        (await response.json()) as MultipartUploadDTO & {
+          urls: UploadURL[];
+        };
       const bytes = await videoFile.arrayBuffer();
       const partSize = 20_000_000;
       uploadedBytes.current = urls.map(() => 0);
