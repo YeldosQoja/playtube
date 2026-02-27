@@ -1,3 +1,5 @@
+"use server";
+
 import { ActionState } from "@/types/action-state";
 
 const API_BASE_URL = process.env["API_BASE_URL"];
@@ -7,6 +9,8 @@ export async function saveVideo(
   formData: FormData,
 ): Promise<ActionState> {
   const key = formData.get("key");
+  const isForKids = formData.get("audience") === "for-kids";
+  const isAgeRestricted = formData.get("ageRestriction") === "age-restriction";
   const response = await fetch(API_BASE_URL + `videos/${key}`, {
     method: "PUT",
     headers: {
@@ -18,9 +22,10 @@ export async function saveVideo(
       title: formData.get("title"),
       desc: formData.get("desc"),
       playlist: formData.get("playlist"),
+      thumbnailKey: formData.get("thumbnailKey"),
       category: formData.get("category"),
-      audience: formData.get("audience"),
-      ageRestriction: formData.get("ageRestriction"),
+      isForKids,
+      isAgeRestricted,
       allowComments: formData.get("allowComments"),
       allowDownloads: formData.get("allowDownloads"),
       tags: formData.get("tags"),
@@ -31,7 +36,7 @@ export async function saveVideo(
     return {
       isSuccess: false,
       isSubmitted: true,
-      err: `Unable to save video metadata.`,
+      err: await response.json(),
     };
   }
 
