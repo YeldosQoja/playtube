@@ -1,5 +1,5 @@
 import "./page.css";
-import UploadDialog from "./_components/upload-dialog";
+import { UploadDialog } from "./_components/upload-dialog";
 
 const Dashboard = () => {
   return (

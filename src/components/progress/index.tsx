@@ -6,13 +6,13 @@ type Props = {
   max: number;
 };
 
-export const Progress = ({ value, max }: Props) => {
+export const ProgressBar = ({ value, max }: Props) => {
   return (
     <RadixProgress.Root
       value={value}
       max={max}
-      className="progress">
-      <RadixProgress.Indicator className="progress__indicator" style={{ transform: `translateX(-${100 - value}%)` }}/>
+      className="progress-bar">
+      <RadixProgress.Indicator className="progress-bar__indicator" style={{ transform: `translateX(-${100 - value}%)` }}/>
     </RadixProgress.Root>
   );
 };

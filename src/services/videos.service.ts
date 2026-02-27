@@ -50,7 +50,7 @@ export class VideosService {
   }
 
   async createVideo(payload: CreateVideoPayload): Promise<MessageResponse> {
-    return this.requestJson<MessageResponse>("videos/create", {
+    return this.requestJson<MessageResponse>("videos", {
       method: "POST",
       body: JSON.stringify(payload),
       headers: this.getJsonHeaders(),

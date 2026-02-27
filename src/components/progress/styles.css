@@ -1,4 +1,4 @@
-.progress {
+.progress-bar {
   overflow: hidden;
   width: 300px;
   height: 10px;
@@ -10,7 +10,7 @@
   transform: translateZ(0);
 }
 
-.progress__indicator {
+.progress-bar__indicator {
   height: 100%;
   width: 100%;
   background-color: var(--primary);

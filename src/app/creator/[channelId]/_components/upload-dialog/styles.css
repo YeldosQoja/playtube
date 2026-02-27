@@ -1,4 +1,4 @@
-.upload-content {
+.upload-dialog__content {
   --bg: var(--surface-container-low);
   position: fixed;
   left: 20vw;
@@ -10,21 +10,9 @@
   flex-direction: column;
   padding: 1rem 3rem;
   border-radius: 1.125rem;
-
-  div[role="tabpanel"] {
-    flex: 1;
-    overflow-y: auto;
-  }
 }
 
-.upload__tabs {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow-y: hidden;
-}
-
-.upload-overlay {
+.upload-dialog__overlay {
   position: fixed;
   left: 0;
   top: 0;
@@ -33,7 +21,7 @@
   background: rgba(0, 0, 0, 0.6);
 }
 
-.upload-overlay[data-state="open"] {
+.upload-dialog__overlay[data-state="open"] {
   animation: overlayShadow 150ms ease-out;
 }
 
@@ -63,6 +51,15 @@
   border-color: var(--on-surface);
 }
 
+.upload-dropzone p {
+  margin-block: 0;
+}
+
+.upload-dropzone__video {
+  flex-grow: 1;
+  gap: 1rem;
+}
+
 .upload-icon-btn {
   background: var(--surface-container-high);
   padding: 2rem;
@@ -74,10 +71,6 @@
   }
 }
 
-.upload-dropzone p {
-  margin-block: 0;
-}
-
 .upload-text-secondary {
   color: var(--on-surface-variant);
 }
@@ -86,10 +79,24 @@
   padding: 0.5rem 1.25rem;
 }
 
-.upload-content {
-  .tabs-list {
+/* Form styles */
+
+.upload-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: hidden;
+
+  .tabs {
+    flex: 1;
     display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+  }
+
+  .tabs-list {
     flex: none;
+    display: flex;
     background: var(--surface-container-high);
     border-radius: 0.375rem;
     margin-bottom: 1rem;
@@ -110,15 +117,20 @@
   .tab-trigger[data-state="active"] {
     background: var(--surface-container);
   }
+
+  div[role="tabpanel"][data-state="active"] {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 }
 
-.save-btn {
-  margin: 0.75rem 0;
-  font-size: 1rem;
-  padding-block: 0.5rem;
-}
-
-.upload-form {
+.upload-form .details {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -142,12 +154,7 @@
   outline-offset: -2px;
 }
 
-.upload-dropzone__video {
-  flex-grow: 1;
-  gap: 1rem;
-}
-
-.upload-content .flex-row {
+.upload-form .flex-row {
   gap: 0.75rem;
 }
 
@@ -155,19 +162,19 @@
   flex: 1;
 }
 
-.upload__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.upload__progress {
+.upload-form .progress {
   display: flex;
   align-items: center;
   column-gap: 1rem;
+
+  > span {
+    font-size: 0.875rem;
+    color: var(--outline);
+  }
 }
 
-.upload__progress-label {
-  font-size: 0.875rem;
-  color: var(--outline);
+.upload-form .save-btn {
+  margin: 0.75rem 0;
+  font-size: 1rem;
+  padding-block: 0.5rem;
 }

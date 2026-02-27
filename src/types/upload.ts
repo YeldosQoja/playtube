@@ -1,6 +1,6 @@
 export type MultipartUploadDTO = {
   uploadId: string;
-  videoId: string;
+  key: string;
 };
 
 export type UploadPart = {
