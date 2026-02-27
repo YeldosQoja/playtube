@@ -25,6 +25,20 @@
   animation: overlayShadow 150ms ease-out;
 }
 
+.upload-dialog__title {
+  margin-block: 0.5rem;
+}
+
+.upload-dialog__content .close-btn {
+  background: transparent;
+  align-self: self-end;
+
+  svg {
+    display: block;
+    color: var(--on-surface-variant);
+  }
+}
+
 @keyframes overlayShadow {
   from {
     opacity: 0;

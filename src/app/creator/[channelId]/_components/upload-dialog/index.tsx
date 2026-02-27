@@ -1,11 +1,18 @@
 "use client";
 
 import "./styles.css";
-import React, { useActionState, useEffect, useRef, useState } from "react";
+import React, {
+  useActionState,
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Tabs from "@radix-ui/react-tabs";
 import { useForm, Controller } from "react-hook-form";
-import { EyeOff, Globe, Image, Lock, UploadIcon } from "lucide-react";
+import { EyeOff, Globe, Image, Lock, UploadIcon, XIcon } from "lucide-react";
 import { Button, Input, Label, Select } from "@/components";
 import { SelectedFileCard } from "@/components/selected-file-card";
 import { useMultipartUpload, useSimpleUpload } from "@/hooks/queries/upload";
@@ -21,6 +28,12 @@ export const UploadDialog = () => {
   const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
   const videoInputRef = useRef<HTMLInputElement | null>(null);
 
+  const {
+    mutate: createDraftVideo,
+    data: key,
+    isSuccess: isDraftVideoCreated,
+  } = useCreateDraftVideo();
+
   const handleUploadFile = () => {
     setUploadDialogOpen(true);
   };
@@ -31,12 +44,17 @@ export const UploadDialog = () => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedVideo(file);
+      createDraftVideo({ title: file.name });
     }
   };
 
   const handleSelectVideo = () => {
     videoInputRef.current?.click();
   };
+
+  const preventClosingDialog = useCallback((e: Event) => {
+    e.preventDefault();
+  }, []);
 
   return (
     <Dialog.Root
@@ -51,10 +69,19 @@ export const UploadDialog = () => {
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="upload-dialog__overlay" />
-        <Dialog.Content className="upload-dialog__content">
-          {selectedVideo === null ? (
+        <Dialog.Content
+          className="upload-dialog__content"
+          onEscapeKeyDown={preventClosingDialog}
+          onPointerDownOutside={preventClosingDialog}
+          onInteractOutside={preventClosingDialog}>
+          <button
+            className="close-btn"
+            onClick={() => setUploadDialogOpen(false)}>
+            <XIcon size={28} />
+          </button>
+          {selectedVideo === null || !isDraftVideoCreated ? (
             <>
-              <Dialog.Title>Upload Video</Dialog.Title>
+              <Dialog.Title className="upload-dialog__title">Upload Video</Dialog.Title>
               <div className="upload-dropzone upload-dropzone__video">
                 <button
                   onClick={handleSelectVideo}
@@ -84,7 +111,13 @@ export const UploadDialog = () => {
               </div>
             </>
           ) : (
-            <UploadForm file={selectedVideo} />
+            <>
+              <Dialog.Title className="upload-dialog__title">{selectedVideo.name}</Dialog.Title>
+              <UploadForm
+                file={selectedVideo}
+                fileKey={key}
+              />
+            </>
           )}
         </Dialog.Content>
       </Dialog.Portal>
@@ -112,29 +145,22 @@ const categories = [
 
 type UploadFormProps = {
   file: File;
+  fileKey: string;
 };
 
-export const UploadForm = ({ file }: UploadFormProps) => {
-  const {
-    mutate: createDraftVideo,
-    data: key,
-    isSuccess: isDraftVideoCreated,
-  } = useCreateDraftVideo();
+export const UploadForm = (props: UploadFormProps) => {
+  const { fileKey, file } = props;
+
   const [{ mutate: startMultipartUpload }, videoUploadProgress] =
     useMultipartUpload();
   const [{ mutate: startSimpleUpload, data: thumbnailKey }] = useSimpleUpload();
 
+  const onOpen = useEffectEvent((payload: { file: File; fileKey: string }) => {
+    startMultipartUpload({ file: payload.file, key: payload.fileKey });
+  });
   useEffect(() => {
-    createDraftVideo({
-      title: file.name,
-    });
-  }, [createDraftVideo, file.name]);
-
-  useEffect(() => {
-    if (isDraftVideoCreated) {
-      startMultipartUpload({ file, key });
-    }
-  }, [startMultipartUpload, isDraftVideoCreated, file, key]);
+    onOpen(props);
+  }, [props]);
 
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const thumbnailInputRef = useRef<HTMLInputElement | null>(null);
@@ -187,9 +213,7 @@ export const UploadForm = ({ file }: UploadFormProps) => {
       formData.append(field, String(value));
     });
 
-    if (key) {
-      formData.append("key", key);
-    }
+    formData.append("key", fileKey);
 
     if (thumbnailKey) {
       formData.append("thumbnailKey", thumbnailKey);
