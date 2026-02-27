@@ -139,7 +139,7 @@ export const UploadForm = ({ file }: UploadFormProps) => {
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const thumbnailInputRef = useRef<HTMLInputElement | null>(null);
 
-  const [, action] = useActionState(saveVideo, {
+  const [, submitAction] = useActionState(saveVideo, {
     isSubmitted: false,
     isSuccess: false,
   });
@@ -176,11 +176,34 @@ export const UploadForm = ({ file }: UploadFormProps) => {
     setThumbnail(null);
   };
 
+  const submitData = (values: UploadVideoForm) => {
+    const formData = new FormData();
+
+    (
+      Object.entries(values) as Array<
+        [keyof UploadVideoForm, UploadVideoForm[keyof UploadVideoForm]]
+      >
+    ).forEach(([field, value]) => {
+      formData.append(field, String(value));
+    });
+
+    if (key) {
+      formData.append("key", key);
+    }
+
+    if (thumbnailKey) {
+      formData.append("thumbnailKey", thumbnailKey);
+    }
+
+    submitAction(formData);
+  };
+
   return (
     <form
       id="upload-form"
       className="upload-form"
-      action={action}>
+      onSubmit={handleSubmit(submitData)}
+      action={submitAction}>
       <Tabs.Root
         className="tabs"
         defaultValue="details">
@@ -314,7 +337,9 @@ export const UploadForm = ({ file }: UploadFormProps) => {
             />
           </div>
         </Tabs.Content>
-        <Tabs.Content value="thumbnail" className="thumbnail">
+        <Tabs.Content
+          value="thumbnail"
+          className="thumbnail">
           <h3>Upload a thumbnail</h3>
           <p className="upload-text-secondary">
             Upload a custom thumbnail that represents your video
