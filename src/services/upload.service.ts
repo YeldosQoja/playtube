@@ -26,12 +26,13 @@ export class UploadService {
     await this.putWithProgress(url, file, onProgress);
   }
 
-  async startMultipartUpload(videoFile: File): Promise<Response> {
+  async startMultipartUpload(videoFile: File, key: string): Promise<Response> {
     return apiFetch("upload/multipart/start", {
       method: "POST",
       body: JSON.stringify({
         contentType: videoFile.type,
         fileSize: videoFile.size,
+        key,
       }),
     });
   }

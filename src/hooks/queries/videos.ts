@@ -5,7 +5,7 @@ export const useCreateDraftVideo = () => {
   return useMutation({
     mutationFn: async (payload: unknown) => {
       const response = await videosService.createVideo(payload);
-      return response.key;
+      return response.key as string;
     },
   });
 };

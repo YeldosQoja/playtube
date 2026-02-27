@@ -29,7 +29,8 @@ export const useMultipartUpload = (): [
     mutationFn: async ({ file, key }: { file: File; key: string }) => {
       totalBytes.current = file.size;
 
-      const response = await uploadService.startMultipartUpload(file);
+      console.log({ file, key });
+      const response = await uploadService.startMultipartUpload(file, key);
       if (!response.ok) {
         throw new Error("Not authenticated!");
       }
