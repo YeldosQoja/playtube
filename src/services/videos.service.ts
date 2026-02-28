@@ -1,4 +1,4 @@
-import { apiFetch } from "@/lib/api";
+import { apiFetch } from "@/services/api-fetch";
 
 export class VideosService {
   async getUploadedVideos() {

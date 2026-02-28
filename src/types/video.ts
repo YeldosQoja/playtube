@@ -24,3 +24,8 @@ export interface UploadVideoForm {
   allowDownloads: boolean;
   tags: string;
 }
+
+export type VideoCategory = {
+  id: number;
+  title: string;
+};

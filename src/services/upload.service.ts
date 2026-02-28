@@ -1,4 +1,4 @@
-import { apiFetch } from "@/lib/api";
+import { apiFetch } from "@/services/api-fetch";
 import type { MultipartUploadDTO, UploadPart, UploadURL } from "@/types/upload";
 
 export type SimpleUploadDTO = {

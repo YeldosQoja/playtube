@@ -22,6 +22,8 @@ import { Checkbox } from "@/components/checkbox";
 import { ProgressBar } from "@/components/progress";
 import { useCreateDraftVideo } from "@/hooks/queries/videos";
 import { saveVideo } from "@/actions/videos";
+import { useCategories } from "@/providers/categories";
+import { usePlaylists } from "@/providers/playlists";
 
 export const UploadDialog = () => {
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
@@ -81,7 +83,9 @@ export const UploadDialog = () => {
           </button>
           {selectedVideo === null || !isDraftVideoCreated ? (
             <>
-              <Dialog.Title className="upload-dialog__title">Upload Video</Dialog.Title>
+              <Dialog.Title className="upload-dialog__title">
+                Upload Video
+              </Dialog.Title>
               <div className="upload-dropzone upload-dropzone__video">
                 <button
                   onClick={handleSelectVideo}
@@ -112,7 +116,9 @@ export const UploadDialog = () => {
             </>
           ) : (
             <>
-              <Dialog.Title className="upload-dialog__title">{selectedVideo.name}</Dialog.Title>
+              <Dialog.Title className="upload-dialog__title">
+                {selectedVideo.name}
+              </Dialog.Title>
               <UploadForm
                 file={selectedVideo}
                 fileKey={key}
@@ -125,24 +131,6 @@ export const UploadDialog = () => {
   );
 };
 
-const categories = [
-  { id: 1, label: "Entertainment" },
-  { id: 2, label: "Education" },
-  { id: 3, label: "Music" },
-  { id: 4, label: "Sports" },
-  { id: 5, label: "Gaming" },
-  { id: 6, label: "News" },
-  { id: 7, label: "Science & Technology" },
-  { id: 8, label: "Travel" },
-  { id: 9, label: "Howto & Style" },
-  { id: 10, label: "Comedy" },
-  { id: 11, label: "Film & Animation" },
-  { id: 12, label: "People & Blogs" },
-  { id: 13, label: "Pets & Animals" },
-  { id: 14, label: "Autos & Vehicles" },
-  { id: 15, label: "Nonprofits & Activism" },
-];
-
 type UploadFormProps = {
   file: File;
   fileKey: string;
@@ -150,6 +138,8 @@ type UploadFormProps = {
 
 export const UploadForm = (props: UploadFormProps) => {
   const { fileKey, file } = props;
+  const categories = useCategories();
+  const playlists = usePlaylists();
 
   const [{ mutate: startMultipartUpload }, videoUploadProgress] =
     useMultipartUpload();
@@ -275,11 +265,10 @@ export const UploadForm = (props: UploadFormProps) => {
               render={({ field }) => (
                 <Select
                   {...field}
-                  options={[
-                    { label: "My playlists", value: "1" },
-                    { label: "Fun", value: "2" },
-                    { label: "Programming", value: "3" },
-                  ]}
+                  options={playlists.map((p) => ({
+                    value: p.id.toString(),
+                    label: p.title,
+                  }))}
                   triggerStyle={{
                     width: "50%",
                   }}
@@ -298,8 +287,8 @@ export const UploadForm = (props: UploadFormProps) => {
                   <Select
                     {...field}
                     options={categories.map((c) => ({
-                      ...c,
                       value: c.id.toString(),
+                      label: c.title,
                     }))}
                     placeholder="Select category"
                   />
