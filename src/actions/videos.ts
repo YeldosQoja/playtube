@@ -1,34 +1,66 @@
 "use server";
 
 import { ActionState } from "@/types/action-state";
+import { cookies } from "next/headers";
+import z from "zod";
 
 const API_BASE_URL = process.env["API_BASE_URL"];
+
+const VideoMetadata = z.object({
+  title: z.string().trim().nonempty(),
+  desc: z.string().nonempty(),
+  playlist: z.coerce.number().gt(0),
+  thumbnailKey: z.nanoid(),
+  category: z.coerce.number().gt(0),
+  audience: z.literal(["for-kids", "not-for-kids"]),
+  ageRestriction: z.literal(["age-restriction", "no-age-restriction"]),
+  allowComments: z.boolean(),
+  allowDownloads: z.boolean(),
+  privacy: z.literal(["public", "unlisted", "private"]),
+});
 
 export async function saveVideo(
   prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
   const key = formData.get("key");
-  const isForKids = formData.get("audience") === "for-kids";
-  const isAgeRestricted = formData.get("ageRestriction") === "age-restriction";
+  const parsedData = VideoMetadata.safeParse({
+    title: formData.get("title"),
+    desc: formData.get("desc"),
+    playlist: formData.get("playlist"),
+    thumbnailKey: formData.get("thumbnailKey"),
+    category: formData.get("category"),
+    audience: formData.get("audience"),
+    ageRestriction: formData.get("ageRestriction"),
+    allowComments: formData.get("allowComments"),
+    allowDownloads: formData.get("allowDownloads"),
+    tags: formData.get("tags"),
+    privacy: formData.get("privacy"),
+  });
+
+  if (parsedData.error) {
+    return {
+      isSuccess: false,
+      isSubmitted: true,
+      err: parsedData.error.message,
+    };
+  }
+
+  const { audience, ageRestriction, ...metadata } = parsedData.data;
+
+  const cookieStore = await cookies();
   const response = await fetch(API_BASE_URL + `videos/${key}`, {
     method: "PUT",
     headers: {
       "content-type": "application/json",
       accept: "application/json",
+      Cookie: cookieStore.toString(),
     },
     credentials: "include",
     body: JSON.stringify({
-      title: formData.get("title"),
-      desc: formData.get("desc"),
-      playlist: formData.get("playlist"),
-      thumbnailKey: formData.get("thumbnailKey"),
-      category: formData.get("category"),
-      isForKids,
-      isAgeRestricted,
-      allowComments: formData.get("allowComments"),
-      allowDownloads: formData.get("allowDownloads"),
-      tags: formData.get("tags"),
+      ...metadata,
+      isForKids: audience === "for-kids",
+      isAgeRestricted: ageRestriction === "age-restriction",
     }),
   });
 
