@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAuthenticated } from "./utils/isAuthenticated";
+import { isAuthenticated } from "./utils/is-authenticated";
 
 export const config = {
   matcher: [
