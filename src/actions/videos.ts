@@ -9,13 +9,14 @@ const API_BASE_URL = process.env["API_BASE_URL"];
 const VideoMetadata = z.object({
   title: z.string().trim().nonempty(),
   desc: z.string().nonempty(),
-  playlist: z.coerce.number().gt(0),
+  playlist: z.coerce.number().optional(),
   thumbnailKey: z.nanoid(),
-  category: z.coerce.number().gt(0),
+  category: z.coerce.number(),
   audience: z.literal(["for-kids", "not-for-kids"]),
   ageRestriction: z.literal(["age-restriction", "no-age-restriction"]),
   allowComments: z.boolean(),
   allowDownloads: z.boolean(),
+  tags: z.string(),
   privacy: z.literal(["public", "unlisted", "private"]),
 });
 
@@ -32,8 +33,8 @@ export async function saveVideo(
     category: formData.get("category"),
     audience: formData.get("audience"),
     ageRestriction: formData.get("ageRestriction"),
-    allowComments: formData.get("allowComments"),
-    allowDownloads: formData.get("allowDownloads"),
+    allowComments: formData.get("allowComments") === "true",
+    allowDownloads: formData.get("allowDownloads") === "true",
     tags: formData.get("tags"),
     privacy: formData.get("privacy"),
   });

@@ -13,5 +13,7 @@ export const getPlaylists = async (): Promise<Playlist[]> => {
     },
   });
 
-  return await response.json();
+  const data = await response.json();
+
+  return data.playlists;
 };

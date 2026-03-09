@@ -8,6 +8,7 @@ import React, {
   useEffectEvent,
   useRef,
   useState,
+  useTransition,
 } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -155,6 +156,7 @@ export const UploadForm = (props: UploadFormProps) => {
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const thumbnailInputRef = useRef<HTMLInputElement | null>(null);
 
+  const [, startTransition] = useTransition();
   const [, submitAction] = useActionState(saveVideo, {
     isSubmitted: false,
     isSuccess: false,
@@ -194,13 +196,14 @@ export const UploadForm = (props: UploadFormProps) => {
 
   const submitData = (values: UploadVideoForm) => {
     const formData = new FormData();
-
     (
       Object.entries(values) as Array<
         [keyof UploadVideoForm, UploadVideoForm[keyof UploadVideoForm]]
       >
     ).forEach(([field, value]) => {
-      formData.append(field, String(value));
+      if (!(typeof value === "string" && !value.length)) {
+        formData.append(field, String(value));
+      }
     });
 
     formData.append("key", fileKey);
@@ -209,15 +212,16 @@ export const UploadForm = (props: UploadFormProps) => {
       formData.append("thumbnailKey", thumbnailKey);
     }
 
-    submitAction(formData);
+    startTransition(() => {
+      submitAction(formData);
+    });
   };
 
   return (
     <form
       id="upload-form"
       className="upload-form"
-      onSubmit={handleSubmit(submitData)}
-      action={submitAction}>
+      onSubmit={handleSubmit(submitData)}>
       <Tabs.Root
         className="tabs"
         defaultValue="details">
@@ -360,6 +364,7 @@ export const UploadForm = (props: UploadFormProps) => {
           {!thumbnail ? (
             <div className="upload-dropzone">
               <button
+                type="button"
                 onClick={handleSelectThumbnail}
                 className="upload-icon-btn">
                 <Image size={42} />
@@ -370,12 +375,12 @@ export const UploadForm = (props: UploadFormProps) => {
                 type="file"
                 accept="image/*"
                 className="hidden"
-                form="upload-form"
                 onChange={pickThumbnailFromComputer}
               />
               <Button
                 className="select-file-btn"
                 title="Select thumbnail"
+                type="button"
                 onClick={handleSelectThumbnail}
               />
             </div>
@@ -423,7 +428,7 @@ export const UploadForm = (props: UploadFormProps) => {
               )}
             />
           </div>
-          <fieldset form="upload-form">
+          <fieldset>
             <legend>Interaction Settings</legend>
             <Controller
               name="allowComments"
@@ -432,7 +437,6 @@ export const UploadForm = (props: UploadFormProps) => {
                 <Checkbox
                   checked={field.value}
                   onCheckedChange={field.onChange}
-                  form="upload-form"
                   id="allow-comments"
                   label="Allow comments"
                 />
@@ -445,7 +449,6 @@ export const UploadForm = (props: UploadFormProps) => {
                 <Checkbox
                   checked={field.value}
                   onCheckedChange={field.onChange}
-                  form="upload-form"
                   id="allow-downloads"
                   label="Allow downloads"
                 />
@@ -463,7 +466,6 @@ export const UploadForm = (props: UploadFormProps) => {
           <span>{`Uploading... ${videoUploadProgress}%`}</span>
         </div>
         <Button
-          form="upload-form"
           type="submit"
           title="Save"
           className="save-btn"

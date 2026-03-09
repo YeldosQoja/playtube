@@ -13,5 +13,7 @@ export const getVideoCategories = async (): Promise<VideoCategory[]> => {
     },
   });
 
-  return await response.json();
+  const data = await response.json();
+
+  return data.categories;
 };
