@@ -463,7 +463,11 @@ export const UploadForm = (props: UploadFormProps) => {
             max={100}
             value={videoUploadProgress}
           />
-          <span>{`Uploading... ${videoUploadProgress}%`}</span>
+          <span>
+            {videoUploadProgress < 100
+              ? `Uploading... ${videoUploadProgress}%`
+              : "Complete"}
+          </span>
         </div>
         <Button
           type="submit"

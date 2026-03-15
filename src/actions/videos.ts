@@ -9,9 +9,19 @@ const API_BASE_URL = process.env["API_BASE_URL"];
 const VideoMetadata = z.object({
   title: z.string().trim().nonempty(),
   desc: z.string().nonempty(),
-  playlist: z.coerce.number().optional(),
+  playlist: z.preprocess((val) => {
+    if (typeof val === "string") {
+      return Number.parseInt(val);
+    }
+    return val;
+  }, z.number().int().positive().nullish()),
   thumbnailKey: z.nanoid(),
-  category: z.coerce.number(),
+  category: z.preprocess((val) => {
+    if (typeof val === "string") {
+      return Number.parseInt(val);
+    }
+    return val;
+  }, z.number().int().positive().nullish()),
   audience: z.literal(["for-kids", "not-for-kids"]),
   ageRestriction: z.literal(["age-restriction", "no-age-restriction"]),
   allowComments: z.boolean(),
