@@ -8,18 +8,18 @@ type Props = {
 };
 
 export const VideoCardGrid = ({ video }: Props) => {
-  const { thumbnail, duration, channel, title, createdAt, viewCount } = video;
+  const { thumbnailUrl, duration, author, title, createdAt, viewCount } = video;
   return (
     <div className="video-card">
       <VideoThumbnail
-        src={thumbnail}
+        src={thumbnailUrl}
         duration={duration}
       />
       <div className="video-card__details">
         <a href="">
           <img
-            src={channel.avatar}
-            alt={channel.name}
+            src={author.avatar}
+            alt={author.username}
             width={48}
             height={48}
             className="video-card__channel-avatar"
@@ -32,7 +32,7 @@ export const VideoCardGrid = ({ video }: Props) => {
           <a
             href=""
             className="video-card__channel-name">
-            {channel.name}
+            {author.username}
           </a>
           <div className="video-card__meta">
             <span>{viewCount} views</span>

@@ -14,14 +14,14 @@ export const VideoCardCompact = ({
   displaysChannel,
   thumbnailLeft,
 }: Props) => {
-  const { thumbnail, duration, channel, title, createdAt, viewCount } = video;
+  const { thumbnailUrl, duration, author, title, createdAt, viewCount } = video;
   return (
     <div
       className={`video-card-compact${
         thumbnailLeft ? " video-card--row" : ""
       }`}>
       <VideoThumbnail
-        src={thumbnail}
+        src={thumbnailUrl}
         className="thumbnail"
         duration={duration}
       />
@@ -33,7 +33,7 @@ export const VideoCardCompact = ({
           <a
             href=""
             className="channel-name">
-            {channel.name}
+            {author.username}
           </a>
         ) : null}
         <div className="meta">

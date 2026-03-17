@@ -1,5 +1,6 @@
 export interface Channel {
-    name: string;
-    avatar: string;
-    bio: string;
+  name: string;
+  username: string;
+  avatar: string;
+  bio: string;
 }

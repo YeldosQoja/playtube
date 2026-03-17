@@ -1,11 +1,13 @@
 import { Channel } from "./channel";
 
 export type Video = {
-  id: string;
+  id: number;
   title: string;
   desc: string;
-  thumbnail: string;
-  channel: Channel;
+  key: string;
+  videoUrl: string;
+  thumbnailUrl: string;
+  author: Channel;
   viewCount: number;
   createdAt: string | Date;
   duration: number;
