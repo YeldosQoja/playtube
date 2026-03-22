@@ -1,7 +1,7 @@
 import "./styles.css";
 import { Share2, Star, ThumbsDown, ThumbsUp } from "lucide-react";
 import comments from "@/comments.json";
-import { Button, Comment } from "@/components";
+import { Button, Comment, VideoPlayer } from "@/components";
 import { VideoCardCompact } from "@/components/video-card/compact";
 import { getVideoByKey } from "@/lib/data/videos";
 
@@ -13,11 +13,7 @@ export default async function Video({ params }: PageProps<"/watch/[key]">) {
 
   return (
     <div className="video flow-content">
-      <video
-        className="video__player"
-        controls
-        src={videoUrl}
-      />
+      <VideoPlayer src={videoUrl} />
       <h1 className="video__title">{title}</h1>
       <div className="video__details">
         <div className="video__channel">
