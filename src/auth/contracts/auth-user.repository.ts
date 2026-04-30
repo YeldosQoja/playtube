@@ -1,11 +1,11 @@
-import { AuthUser } from "./auth.user.js";
+import { AuthUser } from "./auth.user";
 
 export interface IAuthUserRepository {
-  add(
-    username: string,
-    email: string | null | undefined,
-    password: Buffer,
-    salt: Buffer,
+  add(user: Omit<AuthUser, "id">): Promise<AuthUser>;
+  getById(id: string): Promise<AuthUser | null>;
+  getByEmail(email: string): Promise<AuthUser | null>;
+  update(
+    id: string,
+    user: Partial<Omit<AuthUser, "id" | "email">>,
   ): Promise<AuthUser>;
-  getByUsername(username: string): Promise<AuthUser | null>;
 }

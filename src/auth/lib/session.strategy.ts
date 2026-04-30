@@ -1,85 +1,48 @@
-import { promisify } from "node:util";
-import { pbkdf2, timingSafeEqual, randomBytes } from "node:crypto";
 import { Credentials, IAuthStrategy } from "../contracts/auth.strategy";
-import { AuthUser } from "../contracts/auth.user";
-import { IAuthUserRepository } from "../contracts/auth-user.repository";
-import AppError from "@/utils/AppError.js";
-import { HttpStatusCode } from "@/utils/HttpStatusCode.js";
-
-const pbkdf2Async = promisify(pbkdf2);
+import { IAuthGateway } from "../contracts/auth.gateway";
 
 export interface SessionCredentials extends Credentials {
-  username: string;
-  password: string;
-  email?: string | null;
+  email: string;
+  redirectTo?: string;
 }
 
-const ITERATIONS = parseInt(process.env["ITERATIONS"] || "100000");
-
 export class SessionStrategy implements IAuthStrategy<SessionCredentials> {
-  private authUserRepository: IAuthUserRepository;
+  private authGateway: IAuthGateway;
 
-  constructor(authUserRepository: IAuthUserRepository) {
-    this.authUserRepository = authUserRepository;
+  constructor(authGateway: IAuthGateway) {
+    this.authGateway = authGateway;
   }
 
-  async authenticate(credentials: SessionCredentials): Promise<AuthUser> {
-    const { username, password } = credentials;
-
-    const user = await this.authUserRepository.getByUsername(username);
-
-    if (!user) {
-      throw new AppError(
-        "Username or password is incorrect.",
-        HttpStatusCode.UNAUTHORIZED,
-        false,
-      );
-    }
-    const { salt } = user;
-    const hashedPassword = await pbkdf2Async(
-      password,
-      salt,
-      ITERATIONS,
-      32,
-      "sha256",
-    );
-    if (!timingSafeEqual(user.password, hashedPassword)) {
-      throw new AppError(
-        "Username or password is incorrect.",
-        HttpStatusCode.UNAUTHORIZED,
-        false,
-      );
-    }
-
-    return user;
+  async authenticate(credentials: SessionCredentials) {
+    return this.startEmailFlow(credentials);
   }
 
-  async register(credentials: SessionCredentials): Promise<AuthUser> {
-    const { username, password, email } = credentials;
-
-    const salt = randomBytes(16);
-    const hashedPassword = await pbkdf2Async(
-      password,
-      salt,
-      ITERATIONS,
-      32,
-      "sha256",
-    );
-
-    const user = await this.authUserRepository.add(
-      username,
-      email,
-      hashedPassword,
-      salt,
-    );
-    return user;
+  async register(credentials: SessionCredentials) {
+    return this.startEmailFlow(credentials);
   }
 
-  refresh(token: string): Promise<string | null> {
+  async revoke(): Promise<void> {
+    await this.authGateway.signOut({
+      redirect: false,
+      redirectTo: "/auth/signin",
+    });
+  }
+
+  refresh(): Promise<string | null> {
     return Promise.resolve(null);
   }
 
-  revoke(token: string): Promise<void> {
-    return Promise.resolve();
+  private async startEmailFlow(credentials: SessionCredentials) {
+    console.log({ credentials });
+    const redirectTo = await this.authGateway.signIn("resend", {
+      email: credentials.email,
+      redirect: false,
+      redirectTo: credentials.redirectTo ?? "/",
+    });
+
+    return {
+      message: `Magic link sent to ${credentials.email}.`,
+      redirectTo,
+    };
   }
 }

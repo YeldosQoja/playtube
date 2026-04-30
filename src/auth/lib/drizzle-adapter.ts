@@ -1,0 +1,297 @@
+import { and, eq } from "drizzle-orm";
+import type {
+  Adapter,
+  AdapterAccount,
+  AdapterSession,
+  AdapterUser,
+  VerificationToken,
+} from "next-auth/adapters";
+
+import { db } from "@/db";
+import {
+  authAccounts,
+  authSessions,
+  authUsers,
+  authVerificationTokens,
+} from "@/db/schema";
+
+type DbUser = typeof authUsers.$inferSelect;
+type DbAccount = typeof authAccounts.$inferSelect;
+type DbSession = typeof authSessions.$inferSelect;
+type DbVerificationToken = typeof authVerificationTokens.$inferSelect;
+
+type ExtendedAdapterUser = AdapterUser & {
+  firstName?: string | null;
+  lastName?: string | null;
+  username?: string | null;
+};
+
+function mapUser(user: DbUser): ExtendedAdapterUser {
+  return {
+    id: user.id,
+    email: user.email,
+    emailVerified: user.emailVerified,
+    image: user.image,
+    name: user.name,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    username: user.username,
+  };
+}
+
+function mapAccount(account: DbAccount): AdapterAccount {
+  return {
+    userId: account.userId,
+    type: account.type as AdapterAccount["type"],
+    provider: account.provider,
+    providerAccountId: account.providerAccountId,
+    refresh_token: account.refreshToken ?? undefined,
+    access_token: account.accessToken ?? undefined,
+    expires_at: account.expiresAt ?? undefined,
+    token_type:
+      (account.tokenType as AdapterAccount["token_type"] | null) ?? undefined,
+    scope: account.scope ?? undefined,
+    id_token: account.idToken ?? undefined,
+    session_state: account.sessionState ?? undefined,
+  };
+}
+
+function mapSession(session: DbSession): AdapterSession {
+  return {
+    sessionToken: session.sessionToken,
+    userId: session.userId,
+    expires: session.expires,
+  };
+}
+
+function mapVerificationToken(
+  verificationToken: DbVerificationToken,
+): VerificationToken {
+  return {
+    identifier: verificationToken.identifier,
+    token: verificationToken.token,
+    expires: verificationToken.expires,
+  };
+}
+
+export function DrizzleAuthAdapter(): Adapter {
+  return {
+    async createUser(user) {
+      const [createdUser] = await db
+        .insert(authUsers)
+        .values({
+          email: user.email,
+          emailVerified: user.emailVerified,
+          image: user.image ?? null,
+          name: user.name ?? null,
+        })
+        .returning();
+
+      return mapUser(createdUser);
+    },
+    async getUser(id) {
+      const [user] = await db
+        .select()
+        .from(authUsers)
+        .where(eq(authUsers.id, id))
+        .limit(1);
+
+      return user ? mapUser(user) : null;
+    },
+    async getUserByEmail(email) {
+      const [user] = await db
+        .select()
+        .from(authUsers)
+        .where(eq(authUsers.email, email))
+        .limit(1);
+
+      return user ? mapUser(user) : null;
+    },
+    async getUserByAccount({ provider, providerAccountId }) {
+      const [result] = await db
+        .select({
+          user: authUsers,
+        })
+        .from(authAccounts)
+        .innerJoin(authUsers, eq(authAccounts.userId, authUsers.id))
+        .where(
+          and(
+            eq(authAccounts.provider, provider),
+            eq(authAccounts.providerAccountId, providerAccountId),
+          ),
+        )
+        .limit(1);
+
+      return result ? mapUser(result.user) : null;
+    },
+    async updateUser(user) {
+      const [updatedUser] = await db
+        .update(authUsers)
+        .set({
+          email: user.email,
+          emailVerified: user.emailVerified,
+          image: user.image,
+          name: user.name,
+          updatedAt: new Date(),
+        })
+        .where(eq(authUsers.id, user.id))
+        .returning();
+
+      if (!updatedUser) {
+        throw new Error(`Auth user ${user.id} was not found.`);
+      }
+
+      return mapUser(updatedUser);
+    },
+    async deleteUser(userId) {
+      const [deletedUser] = await db
+        .delete(authUsers)
+        .where(eq(authUsers.id, userId))
+        .returning();
+
+      return deletedUser ? mapUser(deletedUser) : null;
+    },
+    async linkAccount(account) {
+      const [linkedAccount] = await db
+        .insert(authAccounts)
+        .values({
+          userId: account.userId,
+          type: account.type,
+          provider: account.provider,
+          providerAccountId: account.providerAccountId,
+          refreshToken: account.refresh_token ?? null,
+          accessToken: account.access_token ?? null,
+          expiresAt: account.expires_at ?? null,
+          tokenType: account.token_type ?? null,
+          scope: account.scope ?? null,
+          idToken: account.id_token ?? null,
+          sessionState: account.session_state
+            ? String(account.session_state)
+            : null,
+        })
+        .onConflictDoUpdate({
+          target: [authAccounts.provider, authAccounts.providerAccountId],
+          set: {
+            accessToken: account.access_token ?? null,
+            expiresAt: account.expires_at ?? null,
+            idToken: account.id_token ?? null,
+            refreshToken: account.refresh_token ?? null,
+            scope: account.scope ?? null,
+            sessionState: account.session_state
+              ? String(account.session_state)
+              : null,
+            tokenType: account.token_type ?? null,
+            updatedAt: new Date(),
+            userId: account.userId,
+          },
+        })
+        .returning();
+
+      return linkedAccount ? mapAccount(linkedAccount) : null;
+    },
+    async unlinkAccount({ provider, providerAccountId }) {
+      const [account] = await db
+        .delete(authAccounts)
+        .where(
+          and(
+            eq(authAccounts.provider, provider),
+            eq(authAccounts.providerAccountId, providerAccountId),
+          ),
+        )
+        .returning();
+
+      return account ? mapAccount(account) : undefined;
+    },
+    async getAccount(providerAccountId, provider) {
+      const [account] = await db
+        .select()
+        .from(authAccounts)
+        .where(
+          and(
+            eq(authAccounts.provider, provider),
+            eq(authAccounts.providerAccountId, providerAccountId),
+          ),
+        )
+        .limit(1);
+
+      return account ? mapAccount(account) : null;
+    },
+    async createSession(session) {
+      const [createdSession] = await db
+        .insert(authSessions)
+        .values({
+          expires: session.expires,
+          sessionToken: session.sessionToken,
+          userId: session.userId,
+        })
+        .returning();
+
+      return mapSession(createdSession);
+    },
+    async getSessionAndUser(sessionToken) {
+      const [result] = await db
+        .select({
+          session: authSessions,
+          user: authUsers,
+        })
+        .from(authSessions)
+        .innerJoin(authUsers, eq(authSessions.userId, authUsers.id))
+        .where(eq(authSessions.sessionToken, sessionToken))
+        .limit(1);
+
+      if (!result) {
+        return null;
+      }
+
+      return {
+        session: mapSession(result.session),
+        user: mapUser(result.user),
+      };
+    },
+    async updateSession(session) {
+      const [updatedSession] = await db
+        .update(authSessions)
+        .set({
+          expires: session.expires,
+          userId: session.userId,
+        })
+        .where(eq(authSessions.sessionToken, session.sessionToken))
+        .returning();
+
+      return updatedSession ? mapSession(updatedSession) : null;
+    },
+    async deleteSession(sessionToken) {
+      const [deletedSession] = await db
+        .delete(authSessions)
+        .where(eq(authSessions.sessionToken, sessionToken))
+        .returning();
+
+      return deletedSession ? mapSession(deletedSession) : null;
+    },
+    async createVerificationToken(verificationToken) {
+      const [createdToken] = await db
+        .insert(authVerificationTokens)
+        .values({
+          identifier: verificationToken.identifier,
+          token: verificationToken.token,
+          expires: verificationToken.expires,
+        })
+        .returning();
+
+      return createdToken ? mapVerificationToken(createdToken) : null;
+    },
+    async useVerificationToken({ identifier, token }) {
+      const [verificationToken] = await db
+        .delete(authVerificationTokens)
+        .where(
+          and(
+            eq(authVerificationTokens.identifier, identifier),
+            eq(authVerificationTokens.token, token),
+          ),
+        )
+        .returning();
+
+      return verificationToken ? mapVerificationToken(verificationToken) : null;
+    },
+  };
+}

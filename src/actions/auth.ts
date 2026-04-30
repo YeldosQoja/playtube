@@ -1,81 +1,127 @@
 "use server";
 
 import { ActionState } from "@/types/action-state";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { parseString as parseSetCookie } from "set-cookie-parser";
+import { AuthError } from "next-auth";
 
-const API_BASE_URL = process.env["API_BASE_URL"];
+import { authService } from "@/auth/lib/auth-service";
+
+type AuthIntent = "signin" | "signup";
+
+function getRequiredField(formData: FormData, field: string) {
+  const value = formData.get(field);
+
+  if (typeof value !== "string" || !value.trim()) {
+    throw new Error(`${field} is required.`);
+  }
+
+  return value.trim();
+}
+
+function getAuthActionErrorMessage(error: unknown) {
+  if (error instanceof AuthError) {
+    switch (error.type) {
+      case "AccessDenied":
+        return "That sign-in request was not accepted.";
+      case "OAuthAccountNotLinked":
+        return "This email is already linked to a different sign-in method.";
+      default:
+        return "Authentication failed. Please try again.";
+    }
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return "Authentication failed. Please try again.";
+}
+
+function getAuthPagePath(intent: AuthIntent) {
+  return intent === "signup" ? "/auth/signup" : "/auth/signin";
+}
 
 export async function signIn(
   prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const response = await fetch(API_BASE_URL + "auth/signin", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      accept: "application/json",
-    },
-    body: JSON.stringify({
-      username: formData.get("username"),
-      password: formData.get("password"),
-    }),
-    credentials: "include",
-  });
+  let result;
 
-  if (!response.ok) {
+  try {
+    result = await authService.authenticate("email", {
+      email: getRequiredField(formData, "email"),
+      redirectTo: "/",
+    });
+  } catch (error) {
     return {
       isSuccess: false,
       isSubmitted: true,
-      err: `Can't sign in with username ${formData.get("username")}`,
+      err: getAuthActionErrorMessage(error),
     };
   }
 
-  const setCookie = response.headers.getSetCookie();
-  const cookieStore = await cookies();
-
-  if (setCookie) {
-    const cookie = parseSetCookie(setCookie[0]);
-    cookieStore.set({
-      ...cookie,
-      sameSite: cookie.sameSite as "lax" | "strict" | "none",
-    });
+  if (result.redirectTo) {
+    redirect(result.redirectTo);
   }
 
-  redirect("/");
+  return {
+    isSuccess: true,
+    isSubmitted: true,
+    msg: result.message ?? "Check your email for a magic link.",
+  };
 }
 
 export async function signUp(
   prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const response = await fetch(API_BASE_URL + "auth/signup", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      accept: "application/json",
-    },
-    body: JSON.stringify({
-      username: formData.get("username"),
-      email: formData.get("email"),
-      firstName: formData.get("firstName"),
-      lastName: formData.get("lastName"),
-      password: formData.get("password"),
-    }),
-  });
+  let result;
 
-  if (!response.ok) {
+  try {
+    result = await authService.register("email", {
+      email: getRequiredField(formData, "email"),
+      redirectTo: "/",
+    });
+  } catch (error) {
     return {
       isSuccess: false,
       isSubmitted: true,
-      err: "Couldn't create account!",
+      err: getAuthActionErrorMessage(error),
     };
+  }
+
+  if (result.redirectTo) {
+    redirect(result.redirectTo);
   }
 
   return {
     isSuccess: true,
     isSubmitted: true,
-    msg: `${formData.get("username")} account is successfully created!`,
+    msg: result.message ?? "Check your email for a magic link.",
   };
+}
+
+export async function authenticateWithProvider(formData: FormData) {
+  const provider = getRequiredField(formData, "provider");
+  const intent = (formData.get("intent") === "signup"
+    ? "signup"
+    : "signin") as AuthIntent;
+
+  let result;
+
+  try {
+    result =
+      intent === "signup"
+        ? await authService.register(provider, { redirectTo: "/" })
+        : await authService.authenticate(provider, { redirectTo: "/" });
+  } catch (error) {
+    const message = encodeURIComponent(getAuthActionErrorMessage(error));
+    redirect(`${getAuthPagePath(intent)}?error=${message}`);
+  }
+
+  if (result.redirectTo) {
+    redirect(result.redirectTo);
+  }
+
+  redirect(getAuthPagePath(intent));
 }

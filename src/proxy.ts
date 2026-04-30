@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isAuthenticated } from "./utils/is-authenticated";
+
+import { auth } from "@/auth";
 
 export const config = {
   matcher: [
@@ -8,9 +9,10 @@ export const config = {
   ],
 };
 
-export default function proxy(request: NextRequest) {
-  if (!isAuthenticated(request)) {
+export default auth((request: NextRequest & { auth: unknown }) => {
+  if (!request.auth) {
     return NextResponse.redirect(new URL("/auth/signin", request.url));
   }
+
   return NextResponse.next();
-}
+});

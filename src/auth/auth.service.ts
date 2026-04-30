@@ -1,15 +1,7 @@
 import { Credentials, IAuthStrategy } from "./contracts/auth.strategy";
-import { IAccountRepository } from "#core/account/account.repository.js";
-
-// TO-DO: create message bus to send UserSignedUp event over
 
 export class AuthService {
   private strategies = new Map<string, IAuthStrategy>();
-  private accountRepository: IAccountRepository;
-
-  constructor(accountRepository: IAccountRepository) {
-    this.accountRepository = accountRepository;
-  }
 
   addStrategy(name: string, strategy: IAuthStrategy) {
     this.strategies.set(name, strategy);
@@ -27,27 +19,14 @@ export class AuthService {
   }
 
   async register(strategy: string, credentials: Credentials) {
-    const authUser = await this.get(strategy).register(credentials);
-
-    const { firstName, lastName, username, email } = credentials;
-
-    await this.accountRepository.createAccount(
-      // @ts-ignore
-      firstName,
-      lastName,
-      username,
-      authUser.id,
-      email,
-    );
-
-    return authUser;
+    return await this.get(strategy).register(credentials);
   }
 
-  async revoke(strategy: string, token: string) {
+  async revoke(strategy: string, token?: string) {
     return this.get(strategy).revoke(token);
   }
 
-  async refresh(strategy: string, token: string) {
+  async refresh(strategy: string, token?: string) {
     return this.get(strategy).refresh(token);
   }
 }

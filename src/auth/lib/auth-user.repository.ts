@@ -1,39 +1,71 @@
+import { eq } from "drizzle-orm";
+
 import { IAuthUserRepository } from "../contracts/auth-user.repository";
 import { AuthUser } from "../contracts/auth.user";
 import { db } from "@/db";
-import { authUsers } from "@/db/schema/auth-users.sql.js";
+import { authUsers } from "@/db/schema";
 
 class AuthUserRepository implements IAuthUserRepository {
-  async add(
-    username: string,
-    email: string | null | undefined,
-    password: Buffer,
-    salt: Buffer,
-  ): Promise<AuthUser> {
-    const result = await db
+  async add(user: Omit<AuthUser, "id">): Promise<AuthUser> {
+    const [createdUser] = await db
       .insert(authUsers)
       .values({
-        username,
-        password,
-        salt,
-        email,
-        createdAt: new Date().toISOString(),
+        username: user.username ?? null,
+        name: user.name ?? null,
+        firstName: user.firstName ?? null,
+        lastName: user.lastName ?? null,
+        email: user.email,
+        emailVerified: user.emailVerified ?? null,
+        image: user.image ?? null,
       })
       .returning();
-    const user = result[0] as AuthUser;
-    return user;
+
+    return createdUser;
   }
 
-  async getByUsername(username: string): Promise<AuthUser | null> {
-    const user = await db.query.authUsers.findFirst({
-      where: (fields, operators) => operators.eq(fields.username, username),
-    });
+  async getById(id: string): Promise<AuthUser | null> {
+    const [user] = await db
+      .select()
+      .from(authUsers)
+      .where(eq(authUsers.id, id))
+      .limit(1);
 
-    if (!user) {
-      return null;
+    return user ?? null;
+  }
+
+  async getByEmail(email: string): Promise<AuthUser | null> {
+    const [user] = await db
+      .select()
+      .from(authUsers)
+      .where(eq(authUsers.email, email))
+      .limit(1);
+
+    return user ?? null;
+  }
+
+  async update(
+    id: string,
+    user: Partial<Omit<AuthUser, "id" | "email">>,
+  ): Promise<AuthUser> {
+    const [updatedUser] = await db
+      .update(authUsers)
+      .set({
+        username: user.username,
+        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        emailVerified: user.emailVerified,
+        image: user.image,
+        updatedAt: new Date(),
+      })
+      .where(eq(authUsers.id, id))
+      .returning();
+
+    if (!updatedUser) {
+      throw new Error(`Auth user ${id} was not found.`);
     }
 
-    return user;
+    return updatedUser;
   }
 }
 

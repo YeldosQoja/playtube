@@ -26,6 +26,12 @@
   margin-block: 2.5rem;
 }
 
+.auth-helper-text {
+  color: var(--on-surface-variant);
+  margin: 0;
+  text-align: center;
+}
+
 .auth-form > * + * {
   margin-top: 1.5rem;
 }
@@ -48,6 +54,48 @@
 .auth-footer-text {
   text-align: center;
   color: var(--on-surface-variant);
+}
+
+.auth-social {
+  color: var(--on-surface-variant);
+  margin-block: 1.5rem;
+  text-align: center;
+}
+
+.auth-social-label {
+  margin: 0 0 0.75rem;
+}
+
+.auth-social-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.auth-social-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--outline-variant, #d4d4d8);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+}
+
+.auth-social-button__text {
+  font-weight: 700;
+}
+
+.auth-status {
+  color: var(--on-surface-variant);
+  margin: 0;
+  text-align: center;
+}
+
+.auth-status--error {
+  color: #b91c1c;
 }
 
 .auth-link {
