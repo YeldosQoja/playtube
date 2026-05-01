@@ -4,6 +4,10 @@ export interface Credentials {
   [key: string]: unknown;
 }
 
+export interface Session {
+  [key: string]: unknown;
+}
+
 export interface AuthStrategyResult {
   message?: string;
   redirectTo?: string;

@@ -3,19 +3,7 @@ import Resend from "next-auth/providers/resend";
 import Apple from "next-auth/providers/apple";
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
-import type { EmailConfig } from "next-auth/providers/email";
-
 import { DrizzleAuthAdapter } from "./lib/drizzle-adapter";
-import { sendVerificationRequest } from "./lib/send-verification-request";
-
-const emailProvider: EmailConfig = {
-  id: "email",
-  type: "email",
-  name: "Email",
-  from: "auth@playtube.mov",
-  maxAge: 15 * 60,
-  sendVerificationRequest,
-};
 
 export const authConfig = {
   adapter: DrizzleAuthAdapter(),
@@ -28,7 +16,17 @@ export const authConfig = {
     verifyRequest: "/auth/verify-request",
   },
   debug: true,
-  providers: [Resend({ from: "auth@playtube.mov" }), Google, Apple, Github],
+  providers: [
+    Resend({
+      id: "email",
+      name: "Email",
+      from: "auth@playtube.mov",
+      maxAge: 15 * 60,
+    }),
+    Google,
+    Apple,
+    Github,
+  ],
   callbacks: {
     async session({ session, user }) {
       if (session.user) {

@@ -4,7 +4,7 @@ import { ActionState } from "@/types/action-state";
 import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
 
-import { authService } from "@/auth/lib/auth-service";
+import { authService } from "@/auth";
 
 type AuthIntent = "signin" | "signup";
 
@@ -103,9 +103,9 @@ export async function signUp(
 
 export async function authenticateWithProvider(formData: FormData) {
   const provider = getRequiredField(formData, "provider");
-  const intent = (formData.get("intent") === "signup"
-    ? "signup"
-    : "signin") as AuthIntent;
+  const intent = (
+    formData.get("intent") === "signup" ? "signup" : "signin"
+  ) as AuthIntent;
 
   let result;
 

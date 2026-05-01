@@ -1,7 +1,10 @@
-import { Credentials, IAuthStrategy } from "./contracts/auth.strategy";
+import { Credentials, IAuthStrategy, Session } from "./contracts/auth.strategy";
+import { IJWTService } from "./contracts/jwt.service";
 
 export class AuthService {
   private strategies = new Map<string, IAuthStrategy>();
+
+  constructor(private jwtService: IJWTService) {}
 
   addStrategy(name: string, strategy: IAuthStrategy) {
     this.strategies.set(name, strategy);
@@ -28,5 +31,17 @@ export class AuthService {
 
   async refresh(strategy: string, token?: string) {
     return this.get(strategy).refresh(token);
+  }
+
+  async mintInternalToken(session: Session) {
+    return await this.jwtService.createSignature(
+      { alg: "RS256", typ: "JWT" },
+      {
+        iss: "playtube-gateway",
+        aud: "playtube-app",
+        sub: session.userId as string,
+        exp: Date.now() + 60 * 1000,
+      },
+    );
   }
 }
