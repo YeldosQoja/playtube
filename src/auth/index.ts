@@ -3,7 +3,6 @@ import NextAuth from "next-auth";
 import { authConfig } from "./config";
 import { JWTService } from "./lib/jwt.service";
 import { AuthService } from "./auth.service";
-import { nextAuthGateway } from "./lib/next-auth.gateway";
 import { OAuthStrategy } from "./lib/oauth.strategy";
 import { SessionStrategy } from "./lib/session.strategy";
 
@@ -20,7 +19,7 @@ const JWT_KEY_FORMAT = process.env["JWT_KEY_FORMAT"] || "PKCS#8";
 const jwtService = new JWTService(JWT_KEY, JWT_KEY_FORMAT);
 
 export const authService = new AuthService(jwtService)
-  .addStrategy("email", new SessionStrategy(nextAuthGateway))
-  .addStrategy("google", new OAuthStrategy("google", nextAuthGateway))
-  .addStrategy("apple", new OAuthStrategy("apple", nextAuthGateway))
-  .addStrategy("github", new OAuthStrategy("github", nextAuthGateway));
+  .addStrategy("email", new SessionStrategy())
+  .addStrategy("google", new OAuthStrategy("google"))
+  .addStrategy("apple", new OAuthStrategy("apple"))
+  .addStrategy("github", new OAuthStrategy("github"));

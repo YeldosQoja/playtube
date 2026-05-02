@@ -40,7 +40,7 @@ export class AuthService {
         iss: "playtube-gateway",
         aud: "playtube-app",
         sub: session.userId as string,
-        exp: Date.now() + 60 * 1000,
+        exp: Date.now() / 1000 + 60,
       },
     );
   }

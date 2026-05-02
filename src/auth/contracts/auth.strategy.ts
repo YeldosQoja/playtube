@@ -1,5 +1,3 @@
-import { AuthUser } from "./auth.user";
-
 export interface Credentials {
   [key: string]: unknown;
 }
@@ -8,16 +6,10 @@ export interface Session {
   [key: string]: unknown;
 }
 
-export interface AuthStrategyResult {
-  message?: string;
-  redirectTo?: string;
-  user?: AuthUser | null;
-}
-
 export interface IAuthStrategy<C extends Credentials = Credentials> {
-  authenticate(credentials: C): Promise<AuthStrategyResult>;
+  authenticate(credentials: C): Promise<void>;
 
-  register(credentials: C): Promise<AuthStrategyResult>;
+  register(credentials: C): Promise<void>;
 
   revoke(token?: string): Promise<void>;
 

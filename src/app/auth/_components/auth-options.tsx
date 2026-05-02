@@ -2,7 +2,7 @@
 
 import { Apple, Github } from "lucide-react";
 
-import { authenticateWithProvider } from "@/actions/auth";
+import { signInViaProvider, signUpViaProvider } from "@/actions/auth";
 
 type Props = {
   mode: "signin" | "signup";
@@ -30,7 +30,7 @@ export const AuthOptions = ({ mode }: Props) => {
         {providers.map(({ id, icon: Icon, label }) => (
           <form
             key={id}
-            action={authenticateWithProvider}>
+            action={mode === "signin" ? signInViaProvider : signUpViaProvider}>
             <input
               type="hidden"
               name="intent"

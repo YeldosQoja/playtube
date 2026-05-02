@@ -1,5 +1,5 @@
+import { signIn, signOut } from "..";
 import { Credentials, IAuthStrategy } from "../contracts/auth.strategy";
-import { IAuthGateway } from "../contracts/auth.gateway";
 
 export interface SessionCredentials extends Credentials {
   email: string;
@@ -7,22 +7,18 @@ export interface SessionCredentials extends Credentials {
 }
 
 export class SessionStrategy implements IAuthStrategy<SessionCredentials> {
-  private authGateway: IAuthGateway;
-
-  constructor(authGateway: IAuthGateway) {
-    this.authGateway = authGateway;
-  }
+  constructor() {}
 
   async authenticate(credentials: SessionCredentials) {
-    return this.startEmailFlow(credentials);
+    this.startEmailFlow(credentials);
   }
 
   async register(credentials: SessionCredentials) {
-    return this.startEmailFlow(credentials);
+    this.startEmailFlow(credentials);
   }
 
   async revoke(): Promise<void> {
-    await this.authGateway.signOut({
+    await signOut({
       redirect: false,
       redirectTo: "/auth/signin",
     });
@@ -33,16 +29,10 @@ export class SessionStrategy implements IAuthStrategy<SessionCredentials> {
   }
 
   private async startEmailFlow(credentials: SessionCredentials) {
-    console.log({ credentials });
-    const redirectTo = await this.authGateway.signIn("resend", {
+    await signIn("resend", {
       email: credentials.email,
       redirect: false,
       redirectTo: credentials.redirectTo ?? "/",
     });
-
-    return {
-      message: `Magic link sent to ${credentials.email}.`,
-      redirectTo,
-    };
   }
 }

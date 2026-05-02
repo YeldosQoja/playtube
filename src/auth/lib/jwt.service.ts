@@ -1,5 +1,5 @@
-import { IJWTService, JOSEHeader, JWTPayload } from "../contracts/jwt.service";
 import * as jose from "jose";
+import { IJWTService, JOSEHeader, JWTPayload } from "../contracts/jwt.service";
 
 export class JWTService implements IJWTService {
   private key: string;

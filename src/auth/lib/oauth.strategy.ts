@@ -1,4 +1,4 @@
-import { IAuthGateway } from "../contracts/auth.gateway";
+import { signIn, signOut } from "..";
 import { Credentials, IAuthStrategy } from "../contracts/auth.strategy";
 
 export interface OAuthCredentials extends Credentials {
@@ -6,26 +6,21 @@ export interface OAuthCredentials extends Credentials {
 }
 
 export class OAuthStrategy implements IAuthStrategy<OAuthCredentials> {
-  constructor(
-    private provider: "apple" | "github" | "google",
-    private authGateway: IAuthGateway,
-  ) {}
+  constructor(private provider: "apple" | "github" | "google") {}
 
   async authenticate(credentials: OAuthCredentials) {
-    const redirectTo = await this.authGateway.signIn(this.provider, {
+    await signIn(this.provider, {
       redirect: false,
       redirectTo: credentials.redirectTo ?? "/",
     });
-
-    return { redirectTo };
   }
 
   async register(credentials: OAuthCredentials) {
-    return this.authenticate(credentials);
+    this.authenticate(credentials);
   }
 
   async revoke(): Promise<void> {
-    await this.authGateway.signOut({
+    await signOut({
       redirect: false,
       redirectTo: "/auth/signin",
     });

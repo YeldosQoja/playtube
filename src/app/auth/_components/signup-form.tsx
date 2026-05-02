@@ -2,13 +2,13 @@
 
 import { useActionState } from "react";
 
-import { signUp } from "@/actions/auth";
+import { signUpViaEmail } from "@/actions/auth";
 import { Button, Input, Label } from "@/components";
 
 import { AuthOptions } from "./auth-options";
 
 export const SignUpForm = () => {
-  const [state, action] = useActionState(signUp, {
+  const [state, action] = useActionState(signUpViaEmail, {
     msg: "",
     isSuccess: false,
     isSubmitted: false,

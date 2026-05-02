@@ -1,22 +1,13 @@
 "use server";
 
-import { ActionState } from "@/types/action-state";
 import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
-
+import { ActionState } from "@/types/action-state";
 import { authService } from "@/auth";
+import z from "zod";
 
-type AuthIntent = "signin" | "signup";
-
-function getRequiredField(formData: FormData, field: string) {
-  const value = formData.get(field);
-
-  if (typeof value !== "string" || !value.trim()) {
-    throw new Error(`${field} is required.`);
-  }
-
-  return value.trim();
-}
+const zodEmail = z.email().nonempty();
+const zodProvider = z.literal(["google", "apple", "github"]);
 
 function getAuthActionErrorMessage(error: unknown) {
   if (error instanceof AuthError) {
@@ -37,21 +28,32 @@ function getAuthActionErrorMessage(error: unknown) {
   return "Authentication failed. Please try again.";
 }
 
-function getAuthPagePath(intent: AuthIntent) {
-  return intent === "signup" ? "/auth/signup" : "/auth/signin";
-}
-
-export async function signIn(
+export async function signInViaEmail(
   prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  let result;
+  const { data: email, error } = await zodEmail.safeParseAsync(
+    formData.get("email"),
+  );
+  if (error) {
+    return {
+      isSuccess: false,
+      isSubmitted: true,
+      msg: error.message,
+    };
+  }
 
   try {
-    result = await authService.authenticate("email", {
-      email: getRequiredField(formData, "email"),
+    const result = await authService.authenticate("email", {
+      email,
       redirectTo: "/",
     });
+
+    return {
+      isSuccess: true,
+      isSubmitted: true,
+      msg: "Check your email for a magic link.",
+    };
   } catch (error) {
     return {
       isSuccess: false,
@@ -59,29 +61,34 @@ export async function signIn(
       err: getAuthActionErrorMessage(error),
     };
   }
-
-  if (result.redirectTo) {
-    redirect(result.redirectTo);
-  }
-
-  return {
-    isSuccess: true,
-    isSubmitted: true,
-    msg: result.message ?? "Check your email for a magic link.",
-  };
 }
 
-export async function signUp(
+export async function signUpViaEmail(
   prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  let result;
+  const { data: email, error } = await zodEmail.safeParseAsync(
+    formData.get("email"),
+  );
+  if (error) {
+    return {
+      isSuccess: false,
+      isSubmitted: true,
+      msg: error.message,
+    };
+  }
 
   try {
-    result = await authService.register("email", {
-      email: getRequiredField(formData, "email"),
+    const result = await authService.register("email", {
+      email,
       redirectTo: "/",
     });
+
+    return {
+      isSuccess: true,
+      isSubmitted: true,
+      msg: "Check your email for a magic link.",
+    };
   } catch (error) {
     return {
       isSuccess: false,
@@ -89,39 +96,42 @@ export async function signUp(
       err: getAuthActionErrorMessage(error),
     };
   }
-
-  if (result.redirectTo) {
-    redirect(result.redirectTo);
-  }
-
-  return {
-    isSuccess: true,
-    isSubmitted: true,
-    msg: result.message ?? "Check your email for a magic link.",
-  };
 }
 
-export async function authenticateWithProvider(formData: FormData) {
-  const provider = getRequiredField(formData, "provider");
-  const intent = (
-    formData.get("intent") === "signup" ? "signup" : "signin"
-  ) as AuthIntent;
-
-  let result;
+export async function signInViaProvider(formData: FormData) {
+  const { data: provider, error } = await zodProvider.safeParseAsync(
+    formData.get("provider"),
+  );
+  if (error) {
+    return;
+  }
 
   try {
-    result =
-      intent === "signup"
-        ? await authService.register(provider, { redirectTo: "/" })
-        : await authService.authenticate(provider, { redirectTo: "/" });
+    const result = await authService.authenticate(provider, {
+      redirectTo: "/",
+    });
+
+    redirect("/auth/signin");
   } catch (error) {
     const message = encodeURIComponent(getAuthActionErrorMessage(error));
-    redirect(`${getAuthPagePath(intent)}?error=${message}`);
+    redirect(`/auth/signin?error=${message}`);
+  }
+}
+
+export async function signUpViaProvider(formData: FormData) {
+  const { data: provider, error } = await zodProvider.safeParseAsync(
+    formData.get("provider"),
+  );
+  if (error) {
+    return;
   }
 
-  if (result.redirectTo) {
-    redirect(result.redirectTo);
-  }
+  try {
+    const result = await authService.register(provider, { redirectTo: "/" });
 
-  redirect(getAuthPagePath(intent));
+    redirect("/auth/signup");
+  } catch (error) {
+    const message = encodeURIComponent(getAuthActionErrorMessage(error));
+    redirect(`/auth/signup?error=${message}`);
+  }
 }
