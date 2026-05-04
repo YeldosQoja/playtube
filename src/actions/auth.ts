@@ -84,6 +84,8 @@ export async function signUpViaEmail(
       redirectTo: "/",
     });
 
+    console.log({ result });
+
     return {
       isSuccess: true,
       isSubmitted: true,
@@ -134,4 +136,31 @@ export async function signUpViaProvider(formData: FormData) {
     const message = encodeURIComponent(getAuthActionErrorMessage(error));
     redirect(`/auth/signup?error=${message}`);
   }
+}
+
+export async function registerUser(prevState: ActionState, formData: FormData) {
+  const response = await fetch("auth/signup", {
+    method: "POST",
+    body: JSON.stringify({
+      username: formData.get("username"),
+      email: formData.get("email"),
+      firstName: formData.get("firstName"),
+      lastName: formData.get("lastName"),
+      password: formData.get("password"),
+    }),
+  });
+
+  if (!response.ok) {
+    return {
+      isSuccess: false,
+      isSubmitted: true,
+      err: "Couldn't create account!",
+    };
+  }
+
+  return {
+    isSuccess: true,
+    isSubmitted: true,
+    msg: `${formData.get("username")} account is successfully created!`,
+  };
 }
