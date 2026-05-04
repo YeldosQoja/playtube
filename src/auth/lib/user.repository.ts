@@ -1,5 +1,3 @@
-import { eq } from "drizzle-orm";
-
 import { IUserRepository } from "../contracts/user.repository";
 import { User } from "../contracts/user";
 import { db } from "@/db";
@@ -20,26 +18,22 @@ class UserRepository implements IUserRepository {
     return createdUser;
   }
 
-  async getById(id: string): Promise<User | null> {
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, id))
-      .limit(1);
+  async getById(id: string, accounts: boolean = true): Promise<User | null> {
+    const user = await db.query.users.findFirst({
+      where: (fields, operators) => operators.eq(fields.id, id),
+      with: accounts ? { accounts: true } : undefined,
+    });
 
     return user ?? null;
   }
 
-  async getByEmail(email: string, accounts: boolean): Promise<User | null> {
+  async getByEmail(
+    email: string,
+    accounts: boolean = true,
+  ): Promise<User | null> {
     const user = await db.query.users.findFirst({
       where: (fields, operators) => operators.eq(fields.email, email),
-      with: {
-        accounts: accounts
-          ? {
-              columns: {},
-            }
-          : undefined,
-      },
+      with: accounts ? { accounts: true } : undefined,
     });
 
     return user ?? null;

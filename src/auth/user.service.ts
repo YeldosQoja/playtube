@@ -17,7 +17,7 @@ export class UserService implements IUserService {
   }
 
   async getByEmail(email: string): Promise<User | null> {
-    return this.userRepository.getByEmail(this.normalizeEmail(email), true);
+    return this.userRepository.getByEmail(this.normalizeEmail(email));
   }
 
   async update(id: string, user: UserUpdate): Promise<User> {

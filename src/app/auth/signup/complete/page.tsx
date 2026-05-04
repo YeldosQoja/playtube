@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { ResgiterUserForm } from "../_components/register-form";
+import { RegisterUserForm } from "../../_components/register-form";
 
-export const Register = () => {
+export default function CompleteSignUp() {
   return (
     <>
       <div className="auth-form-container">
@@ -11,7 +11,7 @@ export const Register = () => {
           <h2 className="auth-title">Create an account</h2>
         </div>
         <div className="auth-body">
-          <ResgiterUserForm />
+          <RegisterUserForm />
         </div>
         <p className="auth-footer-text">
           Already have an account?{" "}
@@ -24,4 +24,4 @@ export const Register = () => {
       </div>
     </>
   );
-};
+}

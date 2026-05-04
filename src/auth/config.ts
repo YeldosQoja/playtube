@@ -4,6 +4,8 @@ import Apple from "next-auth/providers/apple";
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import { DrizzleAuthAdapter } from "./lib/drizzle-adapter";
+import { accountService, userService } from ".";
+import { cookies } from "next/headers";
 
 export const authConfig = {
   adapter: DrizzleAuthAdapter(),
@@ -36,8 +38,39 @@ export const authConfig = {
 
       return session;
     },
-    async signIn() {
-      return true;
+    async signIn({ account, email, user }) {
+      if (!account) return true;
+
+      if (account.provider === "resend" && email?.verificationRequest) {
+        return true;
+      }
+
+      const cookieStore = await cookies();
+      const intent = cookieStore.get("auth_intent")?.value;
+      cookieStore.delete("auth_intent");
+
+      if (intent === "signup") {
+        return true;
+      }
+
+      const existingAccount = await accountService.getByProviderAccount(
+        account.provider,
+        account.providerAccountId,
+      );
+
+      if (existingAccount) return true;
+
+      if (user.email) {
+        const existingUser = await userService.getByEmail(user.email);
+
+        if (!existingUser) {
+          return "/auth/signin?error=not_registered";
+        }
+
+        return true;
+      }
+
+      return "/auth/signin?error=not_registered";
     },
   },
 } satisfies NextAuthConfig;

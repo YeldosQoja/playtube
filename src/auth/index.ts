@@ -3,9 +3,11 @@ import NextAuth from "next-auth";
 import { authConfig } from "./config";
 import { JWTService } from "./lib/jwt.service";
 import { AuthService } from "./auth.service";
+import { AccountService } from "./account.service";
 import { UserService } from "./user.service";
 import { OAuthStrategy } from "./lib/oauth.strategy";
 import { SessionStrategy } from "./lib/session.strategy";
+import { accountRepository } from "./lib/account.repository";
 import { userRepository } from "./lib/user.repository";
 
 export const { handlers, auth, signIn, signOut, unstable_update } =
@@ -21,6 +23,7 @@ const JWT_KEY_FORMAT = process.env["JWT_KEY_FORMAT"] || "PKCS#8";
 const jwtService = new JWTService(JWT_KEY, JWT_KEY_FORMAT);
 
 export const userService = new UserService(userRepository);
+export const accountService = new AccountService(accountRepository);
 
 export const authService = new AuthService(jwtService)
   .addStrategy("email", new SessionStrategy())

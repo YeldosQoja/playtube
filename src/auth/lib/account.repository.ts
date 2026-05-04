@@ -63,7 +63,10 @@ class AccountRepository implements IAccountRepository {
     return upsertedAccount;
   }
 
-  async getById(id: string): Promise<Account | null> {
+  async getById(
+    id: string,
+    includeUser: boolean = true,
+  ): Promise<Account | null> {
     const [account] = await db
       .select()
       .from(accounts)
@@ -76,6 +79,7 @@ class AccountRepository implements IAccountRepository {
   async getByProviderAccount(
     provider: string,
     providerAccountId: string,
+    includeUser: boolean = true,
   ): Promise<Account | null> {
     const [account] = await db
       .select()
@@ -91,11 +95,11 @@ class AccountRepository implements IAccountRepository {
     return account ?? null;
   }
 
-  async getByUserId(userId: string): Promise<Account[]> {
-    return db
-      .select()
-      .from(accounts)
-      .where(eq(accounts.userId, userId));
+  async getByUserId(
+    userId: string,
+    includeUser: boolean = true,
+  ): Promise<Account[]> {
+    return db.select().from(accounts).where(eq(accounts.userId, userId));
   }
 
   async update(id: string, account: AccountUpdate): Promise<Account> {

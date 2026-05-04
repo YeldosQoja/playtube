@@ -10,16 +10,16 @@ export class SessionStrategy implements IAuthStrategy<SessionCredentials> {
   constructor() {}
 
   async authenticate(credentials: SessionCredentials) {
-    this.startEmailFlow(credentials);
+    await this.startEmailFlow(credentials);
   }
 
   async register(credentials: SessionCredentials) {
-    this.startEmailFlow(credentials);
+    await this.startEmailFlow(credentials);
   }
 
   async revoke(): Promise<void> {
     await signOut({
-      redirect: false,
+      redirect: true,
       redirectTo: "/auth/signin",
     });
   }
@@ -31,6 +31,7 @@ export class SessionStrategy implements IAuthStrategy<SessionCredentials> {
   private async startEmailFlow(credentials: SessionCredentials) {
     const result = await signIn("resend", {
       email: credentials.email,
+      redirect: true,
       redirectTo: credentials.redirectTo ?? "/",
     });
 

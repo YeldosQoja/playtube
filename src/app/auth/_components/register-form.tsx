@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { Button, Input, Label } from "@/components";
 import { registerUser } from "@/actions/auth";
 
-export const ResgiterUserForm = () => {
+export const RegisterUserForm = () => {
   const [, action] = useActionState(registerUser, {
     msg: "",
     isSuccess: false,

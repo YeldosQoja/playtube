@@ -7,5 +7,5 @@ export type User = {
   emailVerified?: Date | null;
   image?: string | null;
 
-  accounts: Account[];
+  accounts?: Account[];
 };

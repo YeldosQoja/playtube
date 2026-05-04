@@ -10,7 +10,7 @@ export class OAuthStrategy implements IAuthStrategy<OAuthCredentials> {
 
   async authenticate(credentials: OAuthCredentials) {
     await signIn(this.provider, {
-      redirect: false,
+      redirect: true,
       redirectTo: credentials.redirectTo ?? "/",
     });
   }
@@ -21,7 +21,7 @@ export class OAuthStrategy implements IAuthStrategy<OAuthCredentials> {
 
   async revoke(): Promise<void> {
     await signOut({
-      redirect: false,
+      redirect: true,
       redirectTo: "/auth/signin",
     });
   }

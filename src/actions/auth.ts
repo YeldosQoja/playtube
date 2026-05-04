@@ -5,6 +5,7 @@ import { AuthError } from "next-auth";
 import { ActionState } from "@/types/action-state";
 import { authService } from "@/auth";
 import z from "zod";
+import { cookies } from "next/headers";
 
 const zodEmail = z.email().nonempty();
 const zodProvider = z.literal(["google", "apple", "github"]);
@@ -43,8 +44,17 @@ export async function signInViaEmail(
     };
   }
 
+  const cookieStore = await cookies();
+
+  cookieStore.set("auth_intent", "signin", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    maxAge: 60 * 10, // 10 minutes
+  });
+
   try {
-    const result = await authService.authenticate("email", {
+    await authService.authenticate("email", {
       email,
       redirectTo: "/",
     });
@@ -78,13 +88,20 @@ export async function signUpViaEmail(
     };
   }
 
-  try {
-    const result = await authService.register("email", {
-      email,
-      redirectTo: "/",
-    });
+  const cookieStore = await cookies();
 
-    console.log({ result });
+  cookieStore.set("auth_intent", "signup", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    maxAge: 60 * 10, // 10 minutes
+  });
+
+  try {
+    await authService.register("email", {
+      email,
+      redirectTo: "/auth/signup/complete",
+    });
 
     return {
       isSuccess: true,
@@ -108,12 +125,19 @@ export async function signInViaProvider(formData: FormData) {
     return;
   }
 
+  const cookieStore = await cookies();
+
+  cookieStore.set("auth_intent", "signin", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    maxAge: 60 * 10, // 10 minutes
+  });
+
   try {
-    const result = await authService.authenticate(provider, {
+    await authService.authenticate(provider, {
       redirectTo: "/",
     });
-
-    redirect("/auth/signin");
   } catch (error) {
     const message = encodeURIComponent(getAuthActionErrorMessage(error));
     redirect(`/auth/signin?error=${message}`);
@@ -128,10 +152,19 @@ export async function signUpViaProvider(formData: FormData) {
     return;
   }
 
-  try {
-    const result = await authService.register(provider, { redirectTo: "/" });
+  const cookieStore = await cookies();
 
-    redirect("/auth/signup");
+  cookieStore.set("auth_intent", "signup", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    maxAge: 60 * 10, // 10 minutes
+  });
+
+  try {
+    await authService.register(provider, {
+      redirectTo: "/auth/signup/complete",
+    });
   } catch (error) {
     const message = encodeURIComponent(getAuthActionErrorMessage(error));
     redirect(`/auth/signup?error=${message}`);
