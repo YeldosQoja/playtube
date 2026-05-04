@@ -1,7 +1,11 @@
-export type AuthUser = {
+import { Account } from "./account";
+
+export type User = {
   id: string;
   name?: string | null;
   email: string;
   emailVerified?: Date | null;
   image?: string | null;
+
+  accounts: Account[];
 };

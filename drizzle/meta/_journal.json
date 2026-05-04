@@ -8,6 +8,13 @@
       "when": 1777445636767,
       "tag": "0000_medical_vector",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1777890266538,
+      "tag": "0001_tough_rictor",
+      "breakpoints": true
     }
   ]
 }

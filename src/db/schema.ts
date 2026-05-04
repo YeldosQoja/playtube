@@ -9,7 +9,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-export const authUsers = pgTable("auth_users", {
+export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name"),
   email: text("email").notNull().unique(),
@@ -32,13 +32,13 @@ export const authUsers = pgTable("auth_users", {
     .notNull(),
 });
 
-export const authAccounts = pgTable(
-  "auth_accounts",
+export const accounts = pgTable(
+  "accounts",
   {
     id: uuid("id").defaultRandom().primaryKey(),
     userId: uuid("user_id")
       .notNull()
-      .references(() => authUsers.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "cascade" }),
     type: text("type").notNull(),
     provider: text("provider").notNull(),
     providerAccountId: text("provider_account_id").notNull(),
@@ -63,27 +63,27 @@ export const authAccounts = pgTable(
       .notNull(),
   },
   (table) => [
-    uniqueIndex("auth_accounts_provider_account_idx").on(
+    uniqueIndex("accounts_provider_account_idx").on(
       table.provider,
       table.providerAccountId,
     ),
   ],
 );
 
-export const authSessions = pgTable("auth_sessions", {
+export const sessions = pgTable("sessions", {
   id: uuid("id").defaultRandom().primaryKey(),
   sessionToken: text("session_token").notNull().unique(),
   userId: uuid("user_id")
     .notNull()
-    .references(() => authUsers.id, { onDelete: "cascade" }),
+    .references(() => users.id, { onDelete: "cascade" }),
   expires: timestamp("expires", {
     mode: "date",
     withTimezone: true,
   }).notNull(),
 });
 
-export const authVerificationTokens = pgTable(
-  "auth_verification_tokens",
+export const verificationTokens = pgTable(
+  "verification_tokens",
   {
     identifier: text("identifier").notNull(),
     token: text("token").notNull(),
@@ -95,21 +95,21 @@ export const authVerificationTokens = pgTable(
   (table) => [primaryKey({ columns: [table.identifier, table.token] })],
 );
 
-export const authUsersRelations = relations(authUsers, ({ many }) => ({
-  accounts: many(authAccounts),
-  sessions: many(authSessions),
+export const usersRelations = relations(users, ({ many }) => ({
+  accounts: many(accounts),
+  sessions: many(sessions),
 }));
 
-export const authAccountsRelations = relations(authAccounts, ({ one }) => ({
-  user: one(authUsers, {
-    fields: [authAccounts.userId],
-    references: [authUsers.id],
+export const accountsRelations = relations(accounts, ({ one }) => ({
+  user: one(users, {
+    fields: [accounts.userId],
+    references: [users.id],
   }),
 }));
 
-export const authSessionsRelations = relations(authSessions, ({ one }) => ({
-  user: one(authUsers, {
-    fields: [authSessions.userId],
-    references: [authUsers.id],
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, {
+    fields: [sessions.userId],
+    references: [users.id],
   }),
 }));

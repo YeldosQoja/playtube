@@ -8,17 +8,12 @@ import type {
 } from "next-auth/adapters";
 
 import { db } from "@/db";
-import {
-  authAccounts,
-  authSessions,
-  authUsers,
-  authVerificationTokens,
-} from "@/db/schema";
+import { accounts, sessions, users, verificationTokens } from "@/db/schema";
 
-type DbUser = typeof authUsers.$inferSelect;
-type DbAccount = typeof authAccounts.$inferSelect;
-type DbSession = typeof authSessions.$inferSelect;
-type DbVerificationToken = typeof authVerificationTokens.$inferSelect;
+type DbUser = typeof users.$inferSelect;
+type DbAccount = typeof accounts.$inferSelect;
+type DbSession = typeof sessions.$inferSelect;
+type DbVerificationToken = typeof verificationTokens.$inferSelect;
 
 function mapUser(user: DbUser): AdapterUser {
   return {
@@ -69,7 +64,7 @@ export function DrizzleAuthAdapter(): Adapter {
   return {
     async createUser(user) {
       const [createdUser] = await db
-        .insert(authUsers)
+        .insert(users)
         .values({
           email: user.email,
           emailVerified: user.emailVerified,
@@ -83,8 +78,8 @@ export function DrizzleAuthAdapter(): Adapter {
     async getUser(id) {
       const [user] = await db
         .select()
-        .from(authUsers)
-        .where(eq(authUsers.id, id))
+        .from(users)
+        .where(eq(users.id, id))
         .limit(1);
 
       return user ? mapUser(user) : null;
@@ -92,8 +87,8 @@ export function DrizzleAuthAdapter(): Adapter {
     async getUserByEmail(email) {
       const [user] = await db
         .select()
-        .from(authUsers)
-        .where(eq(authUsers.email, email))
+        .from(users)
+        .where(eq(users.email, email))
         .limit(1);
 
       return user ? mapUser(user) : null;
@@ -101,14 +96,14 @@ export function DrizzleAuthAdapter(): Adapter {
     async getUserByAccount({ provider, providerAccountId }) {
       const [result] = await db
         .select({
-          user: authUsers,
+          user: users,
         })
-        .from(authAccounts)
-        .innerJoin(authUsers, eq(authAccounts.userId, authUsers.id))
+        .from(accounts)
+        .innerJoin(users, eq(accounts.userId, users.id))
         .where(
           and(
-            eq(authAccounts.provider, provider),
-            eq(authAccounts.providerAccountId, providerAccountId),
+            eq(accounts.provider, provider),
+            eq(accounts.providerAccountId, providerAccountId),
           ),
         )
         .limit(1);
@@ -117,7 +112,7 @@ export function DrizzleAuthAdapter(): Adapter {
     },
     async updateUser(user) {
       const [updatedUser] = await db
-        .update(authUsers)
+        .update(users)
         .set({
           email: user.email,
           emailVerified: user.emailVerified,
@@ -125,26 +120,26 @@ export function DrizzleAuthAdapter(): Adapter {
           name: user.name,
           updatedAt: new Date(),
         })
-        .where(eq(authUsers.id, user.id))
+        .where(eq(users.id, user.id))
         .returning();
 
       if (!updatedUser) {
-        throw new Error(`Auth user ${user.id} was not found.`);
+        throw new Error(`User ${user.id} was not found.`);
       }
 
       return mapUser(updatedUser);
     },
     async deleteUser(userId) {
       const [deletedUser] = await db
-        .delete(authUsers)
-        .where(eq(authUsers.id, userId))
+        .delete(users)
+        .where(eq(users.id, userId))
         .returning();
 
       return deletedUser ? mapUser(deletedUser) : null;
     },
     async linkAccount(account) {
       const [linkedAccount] = await db
-        .insert(authAccounts)
+        .insert(accounts)
         .values({
           userId: account.userId,
           type: account.type,
@@ -161,7 +156,7 @@ export function DrizzleAuthAdapter(): Adapter {
             : null,
         })
         .onConflictDoUpdate({
-          target: [authAccounts.provider, authAccounts.providerAccountId],
+          target: [accounts.provider, accounts.providerAccountId],
           set: {
             accessToken: account.access_token ?? null,
             expiresAt: account.expires_at ?? null,
@@ -182,11 +177,11 @@ export function DrizzleAuthAdapter(): Adapter {
     },
     async unlinkAccount({ provider, providerAccountId }) {
       const [account] = await db
-        .delete(authAccounts)
+        .delete(accounts)
         .where(
           and(
-            eq(authAccounts.provider, provider),
-            eq(authAccounts.providerAccountId, providerAccountId),
+            eq(accounts.provider, provider),
+            eq(accounts.providerAccountId, providerAccountId),
           ),
         )
         .returning();
@@ -196,11 +191,11 @@ export function DrizzleAuthAdapter(): Adapter {
     async getAccount(providerAccountId, provider) {
       const [account] = await db
         .select()
-        .from(authAccounts)
+        .from(accounts)
         .where(
           and(
-            eq(authAccounts.provider, provider),
-            eq(authAccounts.providerAccountId, providerAccountId),
+            eq(accounts.provider, provider),
+            eq(accounts.providerAccountId, providerAccountId),
           ),
         )
         .limit(1);
@@ -209,7 +204,7 @@ export function DrizzleAuthAdapter(): Adapter {
     },
     async createSession(session) {
       const [createdSession] = await db
-        .insert(authSessions)
+        .insert(sessions)
         .values({
           expires: session.expires,
           sessionToken: session.sessionToken,
@@ -222,12 +217,12 @@ export function DrizzleAuthAdapter(): Adapter {
     async getSessionAndUser(sessionToken) {
       const [result] = await db
         .select({
-          session: authSessions,
-          user: authUsers,
+          session: sessions,
+          user: users,
         })
-        .from(authSessions)
-        .innerJoin(authUsers, eq(authSessions.userId, authUsers.id))
-        .where(eq(authSessions.sessionToken, sessionToken))
+        .from(sessions)
+        .innerJoin(users, eq(sessions.userId, users.id))
+        .where(eq(sessions.sessionToken, sessionToken))
         .limit(1);
 
       if (!result) {
@@ -241,27 +236,27 @@ export function DrizzleAuthAdapter(): Adapter {
     },
     async updateSession(session) {
       const [updatedSession] = await db
-        .update(authSessions)
+        .update(sessions)
         .set({
           expires: session.expires,
           userId: session.userId,
         })
-        .where(eq(authSessions.sessionToken, session.sessionToken))
+        .where(eq(sessions.sessionToken, session.sessionToken))
         .returning();
 
       return updatedSession ? mapSession(updatedSession) : null;
     },
     async deleteSession(sessionToken) {
       const [deletedSession] = await db
-        .delete(authSessions)
-        .where(eq(authSessions.sessionToken, sessionToken))
+        .delete(sessions)
+        .where(eq(sessions.sessionToken, sessionToken))
         .returning();
 
       return deletedSession ? mapSession(deletedSession) : null;
     },
     async createVerificationToken(verificationToken) {
       const [createdToken] = await db
-        .insert(authVerificationTokens)
+        .insert(verificationTokens)
         .values({
           identifier: verificationToken.identifier,
           token: verificationToken.token,
@@ -273,11 +268,11 @@ export function DrizzleAuthAdapter(): Adapter {
     },
     async useVerificationToken({ identifier, token }) {
       const [verificationToken] = await db
-        .delete(authVerificationTokens)
+        .delete(verificationTokens)
         .where(
           and(
-            eq(authVerificationTokens.identifier, identifier),
-            eq(authVerificationTokens.token, token),
+            eq(verificationTokens.identifier, identifier),
+            eq(verificationTokens.token, token),
           ),
         )
         .returning();
