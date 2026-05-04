@@ -33,8 +33,4 @@ if (env !== "production") {
 
 export const db = drizzle(pool, { schema });
 
-const accounts = await db.select().from(schema.authAccounts);
-
-console.log({ accounts });
-
 export * from "./schema";

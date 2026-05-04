@@ -21,6 +21,10 @@ global.fetch = async (url, init = {}): Promise<Response> => {
 
   headers.set("authorization", "Bearer " + token);
 
+  console.log({ API_BASE_URL });
+  console.log("sending request to endpoint", url);
+  console.log("headers", headers);
+
   const response = await fetch(API_BASE_URL + url, {
     ...init,
     headers,

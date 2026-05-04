@@ -143,10 +143,8 @@ export async function registerUser(prevState: ActionState, formData: FormData) {
     method: "POST",
     body: JSON.stringify({
       username: formData.get("username"),
-      email: formData.get("email"),
       firstName: formData.get("firstName"),
       lastName: formData.get("lastName"),
-      password: formData.get("password"),
     }),
   });
 

@@ -1,10 +1,7 @@
 "use server";
 
 import { ActionState } from "@/types/action-state";
-import { cookies } from "next/headers";
 import z from "zod";
-
-const API_BASE_URL = process.env["API_BASE_URL"];
 
 const VideoMetadata = z.object({
   title: z.string().trim().nonempty(),
@@ -59,15 +56,8 @@ export async function saveVideo(
 
   const { audience, ageRestriction, ...metadata } = parsedData.data;
 
-  const cookieStore = await cookies();
-  const response = await fetch(API_BASE_URL + `videos/${key}`, {
+  const response = await fetch(`videos/${key}`, {
     method: "PUT",
-    headers: {
-      "content-type": "application/json",
-      accept: "application/json",
-      Cookie: cookieStore.toString(),
-    },
-    credentials: "include",
     body: JSON.stringify({
       ...metadata,
       isForKids: audience === "for-kids",

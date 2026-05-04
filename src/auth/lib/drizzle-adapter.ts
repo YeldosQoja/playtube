@@ -20,22 +20,13 @@ type DbAccount = typeof authAccounts.$inferSelect;
 type DbSession = typeof authSessions.$inferSelect;
 type DbVerificationToken = typeof authVerificationTokens.$inferSelect;
 
-type ExtendedAdapterUser = AdapterUser & {
-  firstName?: string | null;
-  lastName?: string | null;
-  username?: string | null;
-};
-
-function mapUser(user: DbUser): ExtendedAdapterUser {
+function mapUser(user: DbUser): AdapterUser {
   return {
     id: user.id,
     email: user.email,
     emailVerified: user.emailVerified,
     image: user.image,
     name: user.name,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    username: user.username,
   };
 }
 

@@ -29,10 +29,11 @@ export class SessionStrategy implements IAuthStrategy<SessionCredentials> {
   }
 
   private async startEmailFlow(credentials: SessionCredentials) {
-    await signIn("resend", {
+    const result = await signIn("resend", {
       email: credentials.email,
-      redirect: false,
       redirectTo: credentials.redirectTo ?? "/",
     });
+
+    console.log("email", { result });
   }
 }

@@ -10,10 +10,7 @@ class AuthUserRepository implements IAuthUserRepository {
     const [createdUser] = await db
       .insert(authUsers)
       .values({
-        username: user.username ?? null,
         name: user.name ?? null,
-        firstName: user.firstName ?? null,
-        lastName: user.lastName ?? null,
         email: user.email,
         emailVerified: user.emailVerified ?? null,
         image: user.image ?? null,
@@ -50,10 +47,7 @@ class AuthUserRepository implements IAuthUserRepository {
     const [updatedUser] = await db
       .update(authUsers)
       .set({
-        username: user.username,
         name: user.name,
-        firstName: user.firstName,
-        lastName: user.lastName,
         emailVerified: user.emailVerified,
         image: user.image,
         updatedAt: new Date(),

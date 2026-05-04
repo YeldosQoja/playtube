@@ -18,8 +18,6 @@ export const authConfig = {
   debug: true,
   providers: [
     Resend({
-      id: "email",
-      name: "Email",
       from: "auth@playtube.mov",
       maxAge: 15 * 60,
     }),
@@ -34,15 +32,12 @@ export const authConfig = {
         session.user.id = user.id;
         session.user.image = user.image;
         session.user.name = user.name;
-        session.user.firstName =
-          "firstName" in user ? (user.firstName ?? null) : null;
-        session.user.lastName =
-          "lastName" in user ? (user.lastName ?? null) : null;
-        session.user.username =
-          "username" in user ? (user.username ?? null) : null;
       }
 
       return session;
+    },
+    async signIn() {
+      return true;
     },
   },
 } satisfies NextAuthConfig;

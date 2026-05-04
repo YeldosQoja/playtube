@@ -36,16 +36,6 @@ export const ResgiterUserForm = () => {
         />
       </div>
       <div>
-        <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          required
-          autoComplete="email"
-        />
-      </div>
-      <div>
         <Label htmlFor="username">Username</Label>
         <Input
           id="username"
@@ -55,19 +45,9 @@ export const ResgiterUserForm = () => {
           autoComplete="username"
         />
       </div>
-      <div>
-        <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          name="password"
-          type="password"
-          required
-          autoComplete="new-password"
-        />
-      </div>
       <Button
         type="submit"
-        title="Sign up"
+        title="Creare"
       />
     </form>
   );

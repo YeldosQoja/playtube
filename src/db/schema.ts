@@ -11,10 +11,7 @@ import {
 
 export const authUsers = pgTable("auth_users", {
   id: uuid("id").defaultRandom().primaryKey(),
-  username: text("username").unique(),
   name: text("name"),
-  firstName: text("first_name"),
-  lastName: text("last_name"),
   email: text("email").notNull().unique(),
   emailVerified: timestamp("email_verified", {
     mode: "date",
@@ -116,4 +113,3 @@ export const authSessionsRelations = relations(authSessions, ({ one }) => ({
     references: [authUsers.id],
   }),
 }));
-
