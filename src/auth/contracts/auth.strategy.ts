@@ -7,9 +7,9 @@ export interface Session {
 }
 
 export interface IAuthStrategy<C extends Credentials = Credentials> {
-  authenticate(credentials: C): Promise<void>;
+  authenticate(credentials: C): Promise<unknown>;
 
-  register(credentials: C): Promise<void>;
+  register(credentials: C): Promise<unknown>;
 
   revoke(token?: string): Promise<void>;
 

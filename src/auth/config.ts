@@ -47,7 +47,6 @@ export const authConfig = {
 
       const cookieStore = await cookies();
       const intent = cookieStore.get("auth_intent")?.value;
-      cookieStore.delete("auth_intent");
 
       if (intent === "signup") {
         return true;

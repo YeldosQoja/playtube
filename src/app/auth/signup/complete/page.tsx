@@ -18,7 +18,7 @@ export default function CompleteSignUp() {
           <Link
             href="/auth/signin"
             className="auth-link">
-            Create
+            Sign in
           </Link>
         </p>
       </div>

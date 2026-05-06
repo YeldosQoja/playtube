@@ -6,7 +6,7 @@ import { authService } from "@/auth";
 import z from "zod";
 import { cookies } from "next/headers";
 import { fetch } from "@/lib/fetch.interceptor";
-import { isRedirectError } from "next/dist/client/components/redirect-error";
+import { redirect } from "next/navigation";
 
 const zodEmail = z.email().nonempty();
 const zodProvider = z.literal(["google", "apple", "github"]);
@@ -40,7 +40,7 @@ export async function signInViaEmail(
   if (error) {
     return {
       isSuccess: false,
-      isSubmitted: true,
+      isSubmitted: false,
       msg: error.message,
     };
   }
@@ -84,7 +84,7 @@ export async function signUpViaEmail(
   if (error) {
     return {
       isSuccess: false,
-      isSubmitted: true,
+      isSubmitted: false,
       msg: error.message,
     };
   }
@@ -123,7 +123,11 @@ export async function signInViaProvider(formData: FormData) {
     formData.get("provider"),
   );
   if (error) {
-    return;
+    return {
+      isSuccess: false,
+      isSubmitted: false,
+      msg: error.message,
+    };
   }
 
   const cookieStore = await cookies();
@@ -145,6 +149,10 @@ export async function signInViaProvider(formData: FormData) {
       msg: "Signed in",
     };
   } catch (error) {
+    if (error instanceof Error && error.message === "NEXT_REDIRECT") {
+      throw error;
+    }
+
     const message = encodeURIComponent(getAuthActionErrorMessage(error));
     return {
       isSuccess: false,
@@ -182,10 +190,10 @@ export async function signUpViaProvider(formData: FormData) {
       msg: "Check your email for a magic link.",
     };
   } catch (error) {
-    const message = encodeURIComponent(getAuthActionErrorMessage(error));
-    if (isRedirectError(error)) {
+    if (error instanceof Error && error.message === "NEXT_REDIRECT") {
       throw error;
     }
+    const message = encodeURIComponent(getAuthActionErrorMessage(error));
     return {
       isSuccess: false,
       isSubmitted: true,
@@ -212,9 +220,11 @@ export async function registerUser(prevState: ActionState, formData: FormData) {
     };
   }
 
-  return {
-    isSuccess: true,
-    isSubmitted: true,
-    msg: `${formData.get("username")} account is successfully created!`,
-  };
+  redirect("/");
+
+  // return {
+  //   isSuccess: true,
+  //   isSubmitted: true,
+  //   msg: `${formData.get("username")} account is successfully created!`,
+  // };
 }

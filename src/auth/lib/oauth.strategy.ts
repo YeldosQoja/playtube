@@ -9,14 +9,14 @@ export class OAuthStrategy implements IAuthStrategy<OAuthCredentials> {
   constructor(private provider: "apple" | "github" | "google") {}
 
   async authenticate(credentials: OAuthCredentials) {
-    await signIn(this.provider, {
+    return await signIn(this.provider, {
       redirect: true,
       redirectTo: credentials.redirectTo ?? "/",
     });
   }
 
   async register(credentials: OAuthCredentials) {
-    this.authenticate(credentials);
+    return await this.authenticate(credentials);
   }
 
   async revoke(): Promise<void> {

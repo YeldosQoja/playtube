@@ -47,7 +47,7 @@ export const RegisterUserForm = () => {
       </div>
       <Button
         type="submit"
-        title="Creare"
+        title="Create"
       />
     </form>
   );
