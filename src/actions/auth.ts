@@ -1,11 +1,12 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
 import { ActionState } from "@/types/action-state";
 import { authService } from "@/auth";
 import z from "zod";
 import { cookies } from "next/headers";
+import { fetch } from "@/lib/fetch.interceptor";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 const zodEmail = z.email().nonempty();
 const zodProvider = z.literal(["google", "apple", "github"]);
@@ -138,9 +139,18 @@ export async function signInViaProvider(formData: FormData) {
     await authService.authenticate(provider, {
       redirectTo: "/",
     });
+    return {
+      isSuccess: true,
+      isSubmitted: true,
+      msg: "Signed in",
+    };
   } catch (error) {
     const message = encodeURIComponent(getAuthActionErrorMessage(error));
-    redirect(`/auth/signin?error=${message}`);
+    return {
+      isSuccess: false,
+      isSubmitted: true,
+      msg: message,
+    };
   }
 }
 
@@ -165,14 +175,27 @@ export async function signUpViaProvider(formData: FormData) {
     await authService.register(provider, {
       redirectTo: "/auth/signup/complete",
     });
+
+    return {
+      isSuccess: true,
+      isSubmitted: true,
+      msg: "Check your email for a magic link.",
+    };
   } catch (error) {
     const message = encodeURIComponent(getAuthActionErrorMessage(error));
-    redirect(`/auth/signup?error=${message}`);
+    if (isRedirectError(error)) {
+      throw error;
+    }
+    return {
+      isSuccess: false,
+      isSubmitted: true,
+      msg: message,
+    };
   }
 }
 
 export async function registerUser(prevState: ActionState, formData: FormData) {
-  const response = await fetch("auth/signup", {
+  const response = await fetch("account/create", {
     method: "POST",
     body: JSON.stringify({
       username: formData.get("username"),

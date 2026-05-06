@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { fetch } from "@/lib/fetch.interceptor";
 
 type RouteContext = {
   params: Promise<{ main?: string[] }> | { main?: string[] };

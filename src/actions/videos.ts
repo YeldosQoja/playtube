@@ -1,5 +1,6 @@
 "use server";
 
+import { fetch } from "@/lib/fetch.interceptor";
 import { ActionState } from "@/types/action-state";
 import z from "zod";
 

@@ -3,9 +3,9 @@ import "server-only";
 
 const API_BASE_URL = process.env["API_BASE_URL"] as string;
 
-const fetch = global.fetch;
+type FetchFn = typeof global.fetch;
 
-global.fetch = async (url, init = {}): Promise<Response> => {
+export const fetch: FetchFn = async (url, init = {}): Promise<Response> => {
   const session = await auth();
   if (session === null) {
     throw new Error("Not authenticated.");
@@ -25,7 +25,7 @@ global.fetch = async (url, init = {}): Promise<Response> => {
   console.log("sending request to endpoint", url);
   console.log("headers", headers);
 
-  const response = await fetch(API_BASE_URL + url, {
+  const response = await global.fetch(API_BASE_URL + url, {
     ...init,
     headers,
   });
