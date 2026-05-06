@@ -1,7 +1,8 @@
 import { Video } from "@/types/video";
+import { fetch } from "../fetch.interceptor";
 
 export const getVideos = async (): Promise<Video[]> => {
-  const response = await fetch("videos");
+  const response = await fetch("video/list");
 
   const data = await response.json();
 
@@ -9,7 +10,7 @@ export const getVideos = async (): Promise<Video[]> => {
 };
 
 export const getVideoByKey = async (key: string): Promise<Video> => {
-  const response = await fetch(`videos/${key}`);
+  const response = await fetch(`video/${key}`);
 
   const data = await response.json();
 

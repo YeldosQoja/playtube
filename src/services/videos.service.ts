@@ -2,7 +2,7 @@ import { apiFetch } from "@/services/api-fetch";
 
 export class VideosService {
   async getUploadedVideos() {
-    const response = await apiFetch("videos", {});
+    const response = await apiFetch("video", {});
     if (!response.ok) {
       throw new Error(`Failed to fetch uploaded videos: ${response.status}`);
     }
@@ -24,7 +24,7 @@ export class VideosService {
   }
 
   async getVideoByPublicKey(publicKey: string) {
-    const response = await apiFetch(`videos/${publicKey}`, {});
+    const response = await apiFetch(`video/${publicKey}`, {});
     if (!response.ok) {
       throw new Error(`Failed to fetch video ${publicKey}: ${response.status}`);
     }
@@ -42,37 +42,43 @@ export class VideosService {
     });
 
     const response = await apiFetch(
-      `videos/${publicKey}/comments?${searchParams.toString()}`,
+      `video/${publicKey}/comment/list/?${searchParams.toString()}`,
       {},
     );
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch comments for ${publicKey}: ${response.status}`);
+      throw new Error(
+        `Failed to fetch comments for ${publicKey}: ${response.status}`,
+      );
     }
 
     return await response.json();
   }
 
   async updateVideoByPublicKey(publicKey: string, payload: unknown) {
-    const response = await apiFetch(`videos/${publicKey}`, {
+    const response = await apiFetch(`video/${publicKey}`, {
       method: "PUT",
       body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to update video ${publicKey}: ${response.status}`);
+      throw new Error(
+        `Failed to update video ${publicKey}: ${response.status}`,
+      );
     }
 
     return await response.json();
   }
 
   async deleteVideoByPublicKey(publicKey: string) {
-    const response = await apiFetch(`videos/${publicKey}`, {
+    const response = await apiFetch(`video/${publicKey}`, {
       method: "DELETE",
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to delete video ${publicKey}: ${response.status}`);
+      throw new Error(
+        `Failed to delete video ${publicKey}: ${response.status}`,
+      );
     }
 
     return await response.json();
