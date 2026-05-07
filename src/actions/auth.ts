@@ -66,6 +66,9 @@ export async function signInViaEmail(
       msg: "Check your email for a magic link.",
     };
   } catch (error) {
+    if (error instanceof Error && error.message === "NEXT_REDIRECT") {
+      throw error;
+    }
     return {
       isSuccess: false,
       isSubmitted: true,
@@ -110,6 +113,9 @@ export async function signUpViaEmail(
       msg: "Check your email for a magic link.",
     };
   } catch (error) {
+    if (error instanceof Error && error.message === "NEXT_REDIRECT") {
+      throw error;
+    }
     return {
       isSuccess: false,
       isSubmitted: true,
